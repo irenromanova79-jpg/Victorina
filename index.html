@@ -2,128 +2,221 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>История: Миссия выполнима</title>
+    <title>История России: 70 шагов к Победе</title>
     <style>
-        :root { --accent: #00f2fe; --bg: #0d1117; }
-        body { background: var(--bg); color: white; font-family: system-ui, -apple-system, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .box { background: #161b22; width: 90%; max-width: 600px; padding: 35px; border-radius: 24px; border: 1px solid #30363d; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .q-text { font-size: 22px; font-weight: 700; margin-bottom: 30px; min-height: 80px; display: flex; align-items: center; justify-content: center; line-height: 1.4; }
-        .grid { display: grid; gap: 12px; }
-        .btn { background: #21262d; border: 1px solid #30363d; padding: 18px; border-radius: 12px; color: white; font-size: 17px; cursor: pointer; transition: 0.2s; text-align: left; }
-        .btn:hover { background: #30363d; border-color: var(--accent); }
-        .correct { background: #238636 !important; border-color: #2ea043 !important; }
-        .wrong { background: #da3633 !important; border-color: #f85149 !important; animation: shake 0.4s; }
-        @keyframes shake { 0%,100% {transform:translateX(0)} 25% {transform:translateX(-8px)} 75% {transform:translateX(8px)} }
-        .progress { height: 6px; background: #21262d; border-radius: 10px; margin-top: 30px; overflow: hidden; }
-        .fill { height: 100%; background: var(--accent); width: 0%; transition: 0.4s; box-shadow: 0 0 15px var(--accent); }
-        .meta { display: flex; justify-content: space-between; font-size: 12px; color: #8b949e; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        #start-screen { display: block; }
-        #game-screen { display: none; }
+        :root { --main: #00f2fe; --gold: #ffd700; --bg: #0a0e14; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        .game-card { background: #16212e; width: 95%; max-width: 650px; padding: 30px; border-radius: 30px; border: 2px solid var(--main); box-shadow: 0 0 50px rgba(0, 242, 254, 0.2); text-align: center; position: relative; }
+        .header { display: flex; justify-content: space-between; color: var(--main); font-weight: bold; font-size: 14px; margin-bottom: 15px; }
+        .q-text { font-size: 22px; font-weight: bold; margin-bottom: 20px; min-height: 80px; line-height: 1.3; }
+        .hint-box { background: rgba(255, 215, 0, 0.1); color: var(--gold); padding: 10px; border-radius: 10px; font-size: 14px; margin-bottom: 15px; display: none; border: 1px dashed var(--gold); }
+        .ans-grid { display: grid; gap: 10px; }
+        .btn { background: rgba(255,255,255,0.05); border: 1px solid var(--main); padding: 16px; border-radius: 15px; color: white; font-size: 17px; cursor: pointer; transition: 0.2s; text-align: left; position: relative; }
+        .btn:hover { background: var(--main); color: black; font-weight: bold; }
+        .correct { background: #22c55e !important; color: white; border-color: #22c55e; }
+        .wrong { background: #ef4444 !important; color: white; border-color: #ef4444; }
+        .praise { color: #00ff88; font-weight: bold; height: 25px; margin-bottom: 10px; font-size: 18px; }
+        .progress-container { height: 10px; background: #1a2a3a; border-radius: 20px; margin-top: 25px; overflow: hidden; }
+        .bar { height: 100%; background: var(--main); width: 0%; transition: 0.3s; box-shadow: 0 0 15px var(--main); }
+        .hint-btn { background: none; border: 1px solid var(--gold); color: var(--gold); border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; float: right; }
+        .artifacts { margin-top: 15px; display: flex; justify-content: center; gap: 10px; font-size: 24px; min-height: 35px; }
+        #start-btn { background: var(--main); color: black; padding: 20px 60px; border-radius: 50px; font-weight: bold; font-size: 24px; cursor: pointer; border: none; box-shadow: 0 0 20px var(--main); }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <div id="start-screen">
-        <h1 style="color:var(--accent)">ИСТОРИЧЕСКИЙ КВЕСТ</h1>
-        <p style="color:#8b949e">Проверка знаний по стр. 77-108<br>(Наполеон, Революция, СССР, ВОВ)</p>
-        <button class="btn" style="width:100%; text-align:center; background:var(--accent); color:black; font-weight:bold; margin-top:20px" id="init-btn">НАЧАТЬ ИГРУ</button>
+<div class="game-card">
+    <div id="screen-start">
+        <h1 style="color:var(--main); font-size: 32px;">ВЕЛИКИЙ МАРАФОН</h1>
+        <p>70 вопросов по истории (стр. 77-108)<br>Собери все артефакты и стань легендой!</p>
+        <button id="start-btn" onclick="startApp()">ПОЕХАЛИ!</button>
     </div>
 
-    <div id="game-screen">
-        <div class="meta">
-            <span id="topic">Эпоха</span>
-            <span>Счет: <span id="score">0</span></span>
+    <div id="screen-game" style="display:none">
+        <div class="header">
+            <span id="topic">ЭПОХА</span>
+            <span>⭐ ОЧКИ: <span id="score">0</span></span>
         </div>
-        <div class="q-text" id="q-txt">Загрузка...</div>
-        <div class="grid" id="ans-box"></div>
-        <div class="progress"><div class="fill" id="bar"></div></div>
+        <div class="praise" id="praise-txt"></div>
+        <button class="hint-btn" onclick="showHint()">?</button>
+        <div class="q-text" id="q-txt"></div>
+        <div class="hint-box" id="hint-box"></div>
+        <div class="ans-grid" id="ans-box"></div>
+        <div class="artifacts" id="artifacts-box"></div>
+        <div class="progress-container"><div class="bar" id="bar"></div></div>
+        <p id="counter" style="font-size:12px; opacity:0.5; margin-top:10px"></p>
     </div>
 
-    <div id="final-screen" style="display:none">
-        <h1 id="result-msg">Конец миссии</h1>
-        <p id="stats" style="font-size:20px; margin:20px 0"></p>
-        <button onclick="location.reload()" class="btn" style="width:100%; text-align:center">ПРОЙТИ ЕЩЕ РАЗ</button>
+    <div id="screen-final" style="display:none">
+        <div id="final-medal" style="font-size: 100px;"></div>
+        <h1 id="final-title"></h1>
+        <p id="final-stats" style="font-size: 22px;"></p>
+        <button class="btn" style="width:100%; text-align:center" onclick="location.reload()">НАЧАТЬ НОВЫЙ МАРАФОН</button>
     </div>
 </div>
 
 <script>
-    // База данных вопросов (расширенная)
-    const db = [
-        {t:"1812 ГОД", q:"Кто командовал русской армией в 1812 году?", a:["Суворов", "Кутузов", "Жуков"], c:1},
-        {t:"1812 ГОД", q:"Где произошло самое масштабное сражение войны?", a:["Под Полтавой", "При Бородино", "У реки Калки"], c:1},
-        {t:"1812 ГОД", q:"Почему Кутузов решил сдать Москву без боя?", a:["Чтобы спасти армию", "Он испугался", "Французы были сильнее"], c:0},
-        {t:"1812 ГОД", q:"Что построили в Москве в честь победы над Наполеоном?", a:["Метро", "Храм Христа Спасителя", "Большой театр"], c:1},
-        {t:"XIX ВЕК", q:"В каком году отменили крепостное право?", a:["1812", "1861", "1917"], c:1},
-        {t:"XIX ВЕК", q:"Александра II прозвали Освободителем за то, что он...", a:["Выиграл войну", "Освободил крестьян", "Открыл школы"], c:1},
-        {t:"XIX ВЕК", q:"Транссибирская магистраль соединила Москву и:", a:["Владивосток", "Париж", "Берлин"], c:0},
-        {t:"XX ВЕК", q:"В каком году началась Первая мировая война?", a:["1914", "1917", "1941"], c:0},
-        {t:"XX ВЕК", q:"Последний русский император — это...", a:["Петр I", "Николай II", "Александр III"], c:1},
-        {t:"XX ВЕК", q:"Революция в России произошла в...", a:["1905 году", "1917 году", "1922 году"], c:1},
-        {t:"СССР", q:"Что такое Ликбез?", a:["Ликвидация безграмотности", "Постройка заводов", "Новая мода"], c:0},
-        {t:"СССР", q:"В каком году открылось московское метро?", a:["1922", "1935", "1941"], c:1},
-        {t:"ВОВ", q:"Когда фашистская Германия напала на СССР?", a:["1 сентября 1939", "22 июня 1941", "9 мая 1945"], c:1},
-        {t:"ВОВ", q:"Какая крепость первой приняла на себя удар?", a:["Смоленская", "Брестская", "Киевская"], c:1},
-        {t:"ВОВ", q:"Дорога Жизни вела в осажденный...", a:["Ленинград", "Сталинград", "Севастополь"], c:0},
-        {t:"ВОВ", q:"Где была крупнейшая танковая битва?", a:["Под Москвой", "На Курской дуге", "В Берлине"], c:1},
-        {t:"ВОВ", q:"Маршал Победы — это...", a:["Конев", "Жуков", "Рокоссовский"], c:1},
-        {t:"ВОВ", q:"Кто водрузил знамя Победы над Рейхстагом?", a:["Жуков и Сталин", "Егоров и Кантария", "Матросов"], c:1},
-        {t:"ВОВ", q:"План нападения на СССР назывался:", a:["Барбаросса", "Тайфун", "Ост"], c:0},
-        {t:"ВОВ", q:"Сколько дней длилась блокада Ленинграда?", a:["500", "почти 900", "1200"], c:1}
+    const database = [
+        // 1812 ГОД (15 вопросов)
+        {t:"1812 ГОД", q:"Кто был правителем Франции, напавшим на Россию?", a:["Людовик XIV", "Наполеон Бонапарт", "Шарль де Голль"], c:1, h:"Его называли 'маленьким капралом', мечтавшим о мировом господстве."},
+        {t:"1812 ГОД", q:"В каком месяце 1812 года началась война?", a:["Май", "Июнь", "Декабрь"], c:1, h:"Французы перешли Неман в начале лета."},
+        {t:"1812 ГОД", q:"Кто командовал русской армией в Бородинской битве?", a:["Суворов", "Кутузов", "Жуков"], c:1, h:"Опытный полководец, ученик Суворова."},
+        {t:"1812 ГОД", q:"Главная битва войны 1812 года произошла у села...", a:["Бородино", "Фили", "Полтава"], c:0, h:"Это название знает каждый школьник по стихам Лермонтова."},
+        {t:"1812 ГОД", q:"Где прошел совет, на котором решили оставить Москву?", a:["В Кремле", "В деревне Фили", "В штабе армии"], c:1, h:"Совет проходил в крестьянской избе."},
+        {t:"1812 ГОД", q:"Почему Кутузов решил сдать Москву французам?", a:["Он испугался", "Чтобы спасти армию и дождаться подкреплений", "Он хотел сжечь город"], c:1, h:"'С потерей Москвы не потеряна Россия...' - говорил он."},
+        {t:"1812 ГОД", q:"Что произошло в Москве, когда туда вошел Наполеон?", a:["Его встретили с ключами", "Начались страшные пожары", "Город сдался без боя"], c:1, h:"Огонь уничтожил большую часть деревянного города."},
+        {t:"1812 ГОД", q:"Как называли обычных людей, воевавших против врага в тылу?", a:["Партизаны", "Гвардейцы", "Рыцари"], c:0, h:"Они действовали небольшими отрядами в лесах."},
+        {t:"1812 ГОД", q:"Какая женщина-партизанка прославилась в 1812 году?", a:["Василиса Кожина", "Екатерина II", "Княгиня Ольга"], c:0, h:"Она была старостихой и водила в бой крестьян."},
+        {t:"1812 ГОД", q:"В честь победы над Наполеоном в Москве был построен...", a:["Большой театр", "Храм Христа Спасителя", "Метрополитен"], c:1, h:"Это величественный храм-памятник."},
+        {t:"1812 ГОД", q:"Куда бежал Наполеон из России?", a:["В Лондон", "В Париж", "В Берлин"], c:1, h:"Он бросил остатки своей армии и уехал спасать трон."},
+        {t:"1812 ГОД", q:"Как назывался первый русский орден, которым награждали героев?", a:["Орден Андрея Первозванного", "Орден Славы", "Медаль 1812 года"], c:0, h:"Это высшая награда империи."},
+        {t:"1812 ГОД", q:"Что случилось с 'Великой армией' Наполеона в России?", a:["Она победила", "Она почти полностью погибла", "Она осталась жить в Москве"], c:1, h:"Голод, морозы и партизаны уничтожили захватчиков."},
+        {t:"1812 ГОД", q:"Кто написал стихотворение 'Бородино'?", a:["Пушкин", "Лермонтов", "Плешаков"], c:1, h:"'Скажи-ка, дядя, ведь не даром...'"},
+        {t:"1812 ГОД", q:"В каком году русские войска вошли в Париж?", a:["1812", "1814", "1945"], c:1, h:"Это был победный заграничный поход."},
+
+        // XIX ВЕК (15 вопросов)
+        {t:"XIX ВЕК", q:"Кто такие декабристы?", a:["Дети декабря", "Офицеры, поднявшие восстание против царя", "Зимние рабочие"], c:1, h:"Они вышли на Сенатскую площадь в 1825 году."},
+        {t:"XIX ВЕК", q:"В каком году было отменено крепостное право?", a:["1812", "1861", "1917"], c:1, h:"Это случилось 19 февраля при Александре II."},
+        {t:"XIX ВЕК", q:"Царь-Освободитель — это...", a:["Николай I", "Александр II", "Петр I"], c:1, h:"Он освободил крестьян от власти помещиков."},
+        {t:"XIX ВЕК", q:"Кого называли 'крепостными'?", a:["Охранников крепости", "Крестьян, не имевших свободы", "Солдат"], c:1, h:"Они принадлежали своим хозяевам-помещикам."},
+        {t:"XIX ВЕК", q:"Транссибирская магистраль соединила...", a:["Москву и Париж", "Москву и Владивосток", "Питер и Киев"], c:1, h:"Это самая длинная железная дорога в мире."},
+        {t:"XIX ВЕК", q:"На чем люди ездили по городам до трамваев?", a:["На машинах", "На конке (лошадь тянула вагон)", "На самокатах"], c:1, h:"Название от слова 'конь'."},
+        {t:"XIX ВЕК", q:"В каком городе открыли первый памятник Минину и Пожарскому?", a:["Нижний Новгород", "Москва", "Суздаль"], c:1, h:"Он стоит прямо на Красной площади."},
+        {t:"XIX ВЕК", q:"Что появилось в городах в конце XIX века?", a:["Телевизоры", "Электрическое освещение и телефон", "Интернет"], c:1, h:"Города стали светлее и удобнее для связи."},
+        {t:"XIX ВЕК", q:"Как изменилась жизнь крестьян после 1861 года?", a:["Они стали свободными людьми", "Ничего не изменилось", "Они стали богатыми"], c:0, h:"Теперь их нельзя было продавать или покупать."},
+        {t:"XIX ВЕК", q:"Первая железная дорога в России соединила...", a:["Москву и Нижний", "Питер и Царское Село", "Москву и Питер"], c:1, h:"Она была совсем короткой и экспериментальной."},
+        {t:"XIX ВЕК", q:"Кто правил Россией почти весь XIX век?", a:["Династия Романовых", "Династия Рюриковичей", "Большевики"], c:0, h:"Это императорская семья."},
+        {t:"XIX ВЕК", q:"Как называли крупные заводы, появившиеся в то время?", a:["Мастерские", "Фабрики и мануфактуры", "Офисы"], c:1, h:"Там работали сотни людей и машин."},
+        {t:"XIX ВЕК", q:"Что такое Манифест?", a:["Письмо другу", "Торжественное обращение царя к народу", "Учебник"], c:1, h:"Именно Манифестом отменили крепостное право."},
+        {t:"XIX ВЕК", q:"Какое техническое чудо помогало передавать сообщения буквами?", a:["Телефон", "Телеграф", "Радио"], c:1, h:"Сообщения передавались по проводам с помощью азбуки Морзе."},
+        {t:"XIX ВЕК", q:"В каком стиле строились многие здания XIX века?", a:["Хайтек", "Классицизм", "Древнерусский"], c:1, h:"С колоннами и строгими формами."},
+
+        // XX ВЕК (Революция и СССР - 15 вопросов)
+        {t:"XX ВЕК", q:"В каком году началась Первая мировая война?", a:["1905", "1914", "1941"], c:1, h:"Это было за три года до революции."},
+        {t:"XX ВЕК", q:"Кто был последним русским царем?", a:["Александр III", "Николай II", "Алексей"], c:1, h:"Он отрекся от престола в 1917 году."},
+        {t:"XX ВЕК", q:"В каком году произошла Революция в России?", a:["1914", "1917", "1922"], c:1, h:"События произошли в феврале и октябре этого года."},
+        {t:"XX ВЕК", q:"Какая партия пришла к власти в октябре 1917?", a:["Большевики", "Дворяне", "Казаки"], c:0, h:"Их лидером был Владимир Ленин."},
+        {t:"XX ВЕК", q:"В каком году образовался СССР?", a:["1917", "1922", "1935"], c:1, h:"Союз Советских Социалистических Республик."},
+        {t:"XX ВЕК", q:"Что такое 'Ликбез'?", a:["Строительство дорог", "Ликвидация безграмотности", "Полет в космос"], c:1, h:"Программа обучения всех взрослых чтению и письму."},
+        {t:"XX ВЕК", q:"В каком году в Москве открылось метро?", a:["1922", "1935", "1945"], c:1, h:"Первая линия была от Сокольников до Парка Культуры."},
+        {t:"XX ВЕК", q:"Как называли передовиков труда в 1930-е?", a:["Стахановцы", "Партизаны", "Рекруты"], c:0, h:"В честь шахтера Алексея Стаханова."},
+        {t:"XX ВЕК", q:"Где в 1930-е годы открылась огромная выставка достижений?", a:["ВДНХ", "Красная площадь", "Эрмитаж"], c:0, h:"Там были павильоны всех республик СССР."},
+        {t:"XX ВЕК", q:"Как изменились школы в СССР?", a:["Обучение стало платным", "Обучение стало бесплатным и обязательным", "Школ стало меньше"], c:1, h:"Государство хотело, чтобы все дети были учеными."},
+        {t:"XX ВЕК", q:"Кто стал лидером страны после Ленина?", a:["Жуков", "Сталин", "Хрущев"], c:1, h:"Он руководил страной во время индустриализации и ВОВ."},
+        {t:"XX ВЕК", q:"Что такое Индустриализация?", a:["Посадка лесов", "Массовое строительство заводов и фабрик", "Запрет машин"], c:1, h:"Страна превращалась из аграрной в промышленную."},
+        {t:"XX ВЕК", q:"Какое название получил город Петербург в 1924 году?", a:["Петроград", "Ленинград", "Санкт-Петербург"], c:1, h:"В честь Ленина."},
+        {t:"XX ВЕК", q:"Что такое Пятилетка?", a:["5 копеек", "План развития хозяйства на 5 лет", "Срок учебы"], c:1, h:"Лозунг был: 'Пятилетку в четыре года!'"},
+        {t:"XX ВЕК", q:"Как назывались коллективные хозяйства в деревнях?", a:["Колхозы", "Заводы", "Мастерские"], c:0, h:"Сокращение от 'коллективное хозяйство'."},
+
+        // ВОВ (25 вопросов - финал)
+        {t:"ВОВ", q:"Дата начала Великой Отечественной войны?", a:["1 сентября 1939", "22 июня 1941", "9 мая 1945"], c:1, h:"Летнее воскресное утро, 4 часа утра."},
+        {t:"ВОВ", q:"Как назывался план нападения Германии на СССР?", a:["Барбаросса", "Тайфун", "Ост"], c:0, h:"В честь средневекового императора Фридриха."},
+        {t:"ВОВ", q:"Какая крепость героически сражалась первой?", a:["Брестская", "Киевская", "Московская"], c:0, h:"Она находится на самой границе в Белоруссии."},
+        {t:"ВОВ", q:"В каком году была битва за Москву?", a:["1941", "1943", "1945"], c:0, h:"Враг стоял у самых ворот столицы."},
+        {t:"ВОВ", q:"Сколько дней длилась блокада Ленинграда?", a:["500", "Почти 900", "1200"], c:1, h:"Это самая долгая и страшная осада города."},
+        {t:"ВОВ", q:"Дорога Жизни — это путь через...", a:["Леса", "Ладожское озеро", "Мост"], c:1, h:"Зимой машины ехали прямо по льду."},
+        {t:"ВОВ", q:"Где произошла великая битва на Волге?", a:["В Сталинграде", "В Курске", "В Берлине"], c:0, h:"Сейчас этот город называется Волгоград."},
+        {t:"ВОВ", q:"В каком году был полностью освобожден Ленинград?", a:["1942", "1944", "1945"], c:1, h:"Это был великий праздник для города-героя."},
+        {t:"ВОВ", q:"Где произошло крупнейшее танковое сражение?", a:["Под Москвой", "На Курской дуге", "В пустыне"], c:1, h:"У деревни Прохоровка."},
+        {t:"ВОВ", q:"Как называли советскую реактивную систему залпового огня?", a:["Василиса", "Катюша", "Мария"], c:1, h:"В честь популярной тогда песни."},
+        {t:"ВОВ", q:"Кто такой Г.К. Жуков?", a:["Поэт", "Маршал Победы", "Ученый"], c:1, h:"Он принимал капитуляцию Германии и парад Победы."},
+        {t:"ВОВ", q:"В каком месяце мы празднуем День Победы?", a:["Апрель", "Май", "Июнь"], c:1, h:"9 число этого месяца."},
+        {t:"ВОВ", q:"Кто водрузил Знамя Победы над Рейхстагом?", a:["Жуков и Конев", "Егоров и Кантария", "Гагарин"], c:1, h:"Два простых солдата из разных республик."},
+        {t:"ВОВ", q:"В каком городе был подписан Акт о капитуляции Германии?", a:["В Москве", "В Берлине", "В Париже"], c:1, h:"В предместье этого города — Карлсхорсте."},
+        {t:"ВОВ", q:"Когда состоялся первый Парад Победы?", a:["9 мая 1945", "24 июня 1945", "1946"], c:1, h:"Его принимали на белом коне на Красной площади."},
+        {t:"ВОВ", q:"Какой танк считался лучшим в годы войны?", a:["Тигр", "Т-34", "Пантера"], c:1, h:"Его создали конструктор Кошкин и его команда."},
+        {t:"ВОВ", q:"Как называли детей, воевавших вместе со взрослыми?", a:["Сыны полка", "Октябрята", "Бойскауты"], c:0, h:"Многие из них стали героями."},
+        {t:"ВОВ", q:"Какой город-герой стоял на Черном море?", a:["Севастополь", "Мурманск", "Минск"], c:0, h:"Его оборона длилась 250 дней."},
+        {t:"ВОВ", q:"Что такое 'Пискарёвское кладбище'?", a:["Музей", "Место памяти жертв блокады Ленинграда", "Парк"], c:1, h:"Там похоронены сотни тысяч ленинградцев."},
+        {t:"ВОВ", q:"Главный символ памяти в Москве у Кремлевской стены?", a:["ВДНХ", "Могила Неизвестного Солдата", "Библиотека"], c:1, h:"Там горит Вечный огонь."},
+        {t:"ВОВ", q:"В каком году закончилась Вторая мировая война?", a:["9 мая 1945", "2 сентября 1945", "1946"], c:1, h:"После победы над Японией."},
+        {t:"ВОВ", q:"Что означают слова 'Никто не забыт, ничто не забыто'?", a:["Правило в школе", "Память о героях войны", "Название книги"], c:1, h:"Эти слова написала поэтесса Ольга Берггольц."},
+        {t:"ВОВ", q:"Зачем заклеивали окна бумагой крест-накрест?", a:["Для красоты", "Чтобы стекла не вылетали от взрывов", "Для тепла"], c:1, h:"Это была мера защиты при бомбежках."},
+        {t:"ВОВ", q:"Как назывался план Гитлера по захвату Москвы?", a:["Тайфун", "Цитадель", "Багратион"], c:0, h:"Как мощный вихрь."},
+        {t:"ВОВ", q:"Какой орден давали за исключительное мужество солдатам?", a:["Орден Славы", "Орден Улыбки", "Медаль за труд"], c:0, h:"У него три степени и оранжево-черная лента."}
     ];
 
-    let current = 0, score = 0, session = [];
+    const praises = ["Молодец!", "Так держать!", "Блестяще!", "Верно!", "Ты гений!", "Потрясающе!", "В точку!", "Горжусь тобой!"];
+    const artifacts = ["📜", "⚔️", "🏆", "🎖️", "👑", "🌟", "🔥"];
+    
+    let current = 0, score = 0;
 
-    // Гарантированный запуск после загрузки страницы
-    window.onload = function() {
-        document.getElementById('init-btn').onclick = function() {
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            session = db.sort(() => 0.5 - Math.random()).slice(0, 15);
-            render();
-        };
-    };
+    function startApp() {
+        document.getElementById('screen-start').style.display = 'none';
+        document.getElementById('screen-game').style.display = 'block';
+        update();
+    }
 
-    function render() {
-        const item = session[current];
+    function update() {
+        const item = database[current];
         document.getElementById('topic').innerText = item.t;
         document.getElementById('q-txt').innerText = item.q;
-        document.getElementById('bar').style.width = (current / session.length) * 100 + '%';
+        document.getElementById('counter').innerText = `Вопрос ${current + 1} из ${database.length}`;
+        document.getElementById('bar').style.width = (current / database.length) * 100 + '%';
+        document.getElementById('hint-box').style.display = 'none';
+        document.getElementById('praise-txt').innerText = '';
         
         const box = document.getElementById('ans-box');
         box.innerHTML = '';
-        
         item.a.forEach((txt, i) => {
             const b = document.createElement('button');
             b.className = 'btn';
             b.innerText = txt;
-            b.onclick = () => {
-                const btns = document.querySelectorAll('.btn');
-                btns.forEach(btn => btn.style.pointerEvents = 'none');
-                if(i === item.c) {
-                    b.classList.add('correct');
-                    score++;
-                    document.getElementById('score').innerText = score;
-                } else {
-                    b.classList.add('wrong');
-                    btns[item.c].classList.add('correct');
-                }
-                setTimeout(() => {
-                    current++;
-                    if(current < session.length) render();
-                    else finish();
-                }, 1300);
-            };
+            b.onclick = () => check(i, b);
             box.appendChild(b);
         });
+        
+        // Артефакты за каждые 10 очков
+        const artCount = Math.floor(score / 10);
+        let artHtml = '';
+        for(let j=0; j<artCount; j++) artHtml += artifacts[j % artifacts.length] + ' ';
+        document.getElementById('artifacts-box').innerHTML = artHtml;
+    }
+
+    function showHint() {
+        const hb = document.getElementById('hint-box');
+        hb.innerText = database[current].h;
+        hb.style.display = 'block';
+    }
+
+    function check(idx, btn) {
+        const correct = database[current].c;
+        const btns = document.querySelectorAll('.btn');
+        btns.forEach(b => b.style.pointerEvents = 'none');
+
+        if(idx === correct) {
+            btn.classList.add('correct');
+            score++;
+            document.getElementById('score').innerText = score;
+            document.getElementById('praise-txt').innerText = praises[Math.floor(Math.random()*praises.length)];
+        } else {
+            btn.classList.add('wrong');
+            btns[correct].classList.add('correct');
+            document.getElementById('praise-txt').innerText = 'Ничего, в следующий раз получится!';
+            document.getElementById('praise-txt').style.color = '#ff4d4d';
+        }
+
+        setTimeout(() => {
+            current++;
+            document.getElementById('praise-txt').style.color = '#00ff88';
+            if(current < database.length) update();
+            else finish();
+        }, 1200);
     }
 
     function finish() {
-        document.getElementById('game-screen').style.display = 'none';
-        const fin = document.getElementById('final-screen');
-        fin.style.display = 'block';
-        document.getElementById('stats').innerText = `Твой результат: ${score} из ${session.length}`;
-        document.getElementById('result-msg').innerText = score > 12 ? "Ты настоящий историк! 🎓" : "Хорошая работа! 📚";
+        document.getElementById('screen-game').style.display = 'none';
+        const fs = document.getElementById('screen-final');
+        fs.style.display = 'block';
+        
+        let m = "🥉", t = "Ученик-Летописец";
+        if(score >= 65) { m = "💎", t = "Легендарный Историк"; }
+        else if(score >= 50) { m = "🥇", t = "Маршал Знаний"; }
+        else if(score >= 35) { m = "🥈", t = "Знаток Эпох"; }
+
+        document.getElementById('final-medal').innerText = m;
+        document.getElementById('final-title').innerText = t;
+        document.getElementById('final-stats').innerText = `Твой рекорд: ${score} из ${database.length}`;
     }
 </script>
 </body>
