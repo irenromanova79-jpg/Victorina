@@ -2,145 +2,156 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Тренажер: Окружающий мир (Плешаков)</title>
+    <title>Тренажер: Великие страницы истории</title>
     <style>
-        :root { --main: #2c3e50; --gold: #f1c40f; --green: #27ae60; --red: #e74c3c; --bg: #f4f7f6; }
-        body { background: var(--bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; padding: 20px; }
-        .card { background: white; width: 100%; max-width: 650px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 40px; text-align: center; border-bottom: 8px solid var(--main); }
-        .q-text { font-size: 24px; color: var(--main); margin: 25px 0; font-weight: bold; min-height: 70px; line-height: 1.3; }
-        .btn { background: #fff; border: 2px solid #dee2e6; padding: 18px; border-radius: 15px; font-size: 18px; margin: 10px 0; width: 100%; cursor: pointer; transition: 0.3s; color: #495057; font-weight: 500; }
-        .btn:hover { border-color: var(--gold); background: #fffdf5; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .btn.correct { background: var(--green) !important; color: white; border-color: var(--green); }
-        .btn.wrong { background: var(--red) !important; color: white; border-color: var(--red); animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
-        .score-zone { display: flex; justify-content: space-between; font-weight: bold; color: #adb5bd; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-        .hint-link { color: #3498db; cursor: pointer; font-size: 14px; margin-top: 15px; display: inline-block; }
-        #fin-screen { display: none; padding: 20px; }
-        .rank-medal { font-size: 80px; margin-bottom: 20px; }
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --success: #22c55e;
+            --error: #ef4444;
+            --text: #f8fafc;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: var(--card);
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .header { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 10px; }
+        .question { font-size: 22px; font-weight: 600; margin-bottom: 30px; line-height: 1.4; min-height: 80px; }
+        
+        .options { display: grid; gap: 12px; }
+        .btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .btn:hover { background: rgba(56, 189, 248, 0.1); border-color: var(--accent); }
+        .btn.correct { background: var(--success) !important; border-color: var(--success); }
+        .btn.wrong { background: var(--error) !important; border-color: var(--error); animation: shake 0.4s; }
+        
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+        
+        .footer { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .score { font-size: 18px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div id="game-zone">
-        <div class="score-zone">
-            <span>Вопрос <span id="cur">1</span> из 15</span>
-            <span style="color:var(--gold)">Очки: <span id="points">0</span> ⭐</span>
-        </div>
-        <div class="q-text" id="q-txt">Загрузка истории...</div>
-        <div id="ans-box"></div>
-        <div class="hint-link" onclick="getHint()">Подсказать правильный ответ</div>
+<div class="container">
+    <div class="header" id="topic-name">История России</div>
+    <div class="question" id="q-text">Загрузка...</div>
+    <div class="options" id="options"></div>
+    
+    <div class="footer">
+        <div id="progress">Вопрос 1 из 12</div>
+        <div class="score">⭐ <span id="points">0</span></div>
     </div>
 
-    <div id="fin-screen">
-        <div class="rank-medal" id="medal">🏅</div>
-        <h1 id="rank-txt">Результат</h1>
-        <p id="stats-txt" style="font-size: 20px; color: #666;"></p>
-        <button class="btn" onclick="location.reload()" style="background: var(--main); color:white; border:none; margin-top: 20px;">Пройти ещё раз</button>
+    <div id="result" style="display:none">
+        <h1 id="result-title">Готово!</h1>
+        <p id="result-text"></p>
+        <button class="btn" onclick="location.reload()" style="text-align:center; width: 100%; margin-top:20px; background: var(--accent); color: var(--bg); font-weight: bold;">Повторить тренировку</button>
     </div>
 </div>
 
 <script>
-    const database = [
-        // 1812
-        {q: "В каком году войска Наполеона вторглись в Россию?", a: ["1703", "1812", "1914"], c: 1},
-        {q: "Как звали главнокомандующего русской армией в войне 1812 года?", a: ["Суворов", "Кутузов", "Жуков"], c: 1},
-        {q: "В честь победы над Наполеоном в Москве построили...", a: ["Храм Христа Спасителя", "Большой театр", "Зимний дворец"], c: 0},
-        {q: "Где произошло Бородинское сражение?", a: ["Под Петербургом", "Недалеко от Москвы", "У реки Невы"], c: 1},
-        {q: "Почему Наполеон покинул Москву?", a: ["Ему приказали", "Из-за пожаров и отсутствия еды", "Он хотел идти в Сибирь"], c: 1},
-        // 19 век
-        {q: "Какой царь отменил крепостное право в 1861 году?", a: ["Петр I", "Александр II", "Николай II"], c: 1},
-        {q: "Как называли Александра II за освобождение крестьян?", a: ["Грозный", "Великий", "Освободитель"], c: 2},
-        {q: "Что такое Транссибирская магистраль?", a: ["Огромный завод", "Железная дорога через всю страну", "Речной путь"], c: 1},
-        {q: "Какое новшество появилось в городах в конце 19 века?", a: ["Интернет", "Электрическое освещение", "Телевизоры"], c: 1},
-        {q: "В каком году открылась железная дорога между Москвой и Петербургом?", a: ["1851", "1812", "1905"], c: 0},
-        // 20 век до войны
-        {q: "Кто был последним российским императором?", a: ["Александр III", "Николай II", "Павел I"], c: 1},
-        {q: "В каком году Россия стала называться СССР?", a: ["1917", "1922", "1945"], c: 1},
-        {q: "Что такое Ликбез в 1920-е годы?", a: ["Строительство дорог", "Ликвидация безграмотности", "Полеты на самолетах"], c: 1},
-        {q: "В каком году в Москве открылось первое метро?", a: ["1900", "1935", "1950"], c: 1},
-        {q: "Как называли людей, перевыполнявших нормы на заводах в 1930-е?", a: ["Дворяне", "Стахановцы", "Рыцари"], c: 1},
-        // ВОВ
-        {q: "Дата начала Великой Отечественной войны?", a: ["22 июня 1941", "1 сентября 1939", "9 мая 1945"], c: 0},
-        {q: "Какая крепость первой встретила врага в июне 1941 года?", a: ["Московская", "Брестская", "Киевская"], c: 1},
-        {q: "Как называлась дорога по льду к блокадному Ленинграду?", a: ["Путь Победы", "Дорога жизни", "Северная тропа"], c: 1},
-        {q: "В каком городе состоялся первый Парад Победы?", a: ["В Берлине", "В Москве", "В Ленинграде"], c: 1},
-        {q: "Кто водрузил Знамя Победы над Рейхстагом?", a: ["Жуков и Конев", "Егоров и Кантария", "Гагарин и Титов"], c: 1},
-        {q: "Сколько дней длилась блокада Ленинграда?", a: ["100 дней", "почти 900 дней", "500 дней"], c: 1},
-        {q: "Главный маршал Победы, командовавший армией?", a: ["М. Кутузов", "Г. Жуков", "А. Суворов"], c: 1},
-        // Космос
-        {q: "В каком году был запущен первый искусственный спутник Земли?", a: ["1945", "1957", "1961"], c: 1},
-        {q: "Кто стал первым человеком в космосе?", a: ["Алексей Леонов", "Юрий Гагарин", "Герман Титов"], c: 1},
-        {q: "Как назывался корабль Юрия Гагарина?", a: ["Восток-1", "Союз", "Мир"], c: 0},
-        {q: "Кто первым вышел в открытый космос из корабля?", a: ["Юрий Гагарин", "Алексей Леонов", "Валентина Терешкова"], c: 1},
-        {q: "Первая в мире женщина-космонавт?", a: ["Светлана Савицкая", "Валентина Терешкова", "Марина Попович"], c: 1},
-        {q: "С какого космодрома взлетел первый человек?", a: ["Плесецк", "Байконур", "Восточный"], c: 1},
-        // Современность
-        {q: "В каком году СССР перестал существовать?", a: ["1980", "1991", "2000"], c: 1},
-        {q: "Кто был первым президентом России?", a: ["М. Горбачев", "Б. Ельцин", "В. Путин"], c: 1}
+    const db = [
+        {t: "1812 год", q: "В честь победы в Отечественной войне 1812 года в Москве был возведен:", a: ["Исаакиевский собор", "Храм Христа Спасителя", "Казанский собор"], c: 1},
+        {t: "1812 год", q: "Кто был назначен главнокомандующим русскими войсками в августе 1812 года?", a: ["А.В. Суворов", "М.И. Кутузов", "П.И. Багратион"], c: 1},
+        {t: "История XIX века", q: "В каком году в России было отменено крепостное право?", a: ["1812 г.", "1861 г.", "1881 г."], c: 1},
+        {t: "История XIX века", q: "Какое техническое новшество появилось в городах России к концу XIX века?", a: ["Интернет", "Электрическое освещение", "Атомные станции"], c: 1},
+        {t: "Начало XX века", q: "Как назывался последний российский император?", a: ["Александр III", "Николай II", "Петр I"], c: 1},
+        {t: "Начало XX века", q: "В каком году Россия вступила в Первую мировую войну?", a: ["1905 г.", "1914 г.", "1917 г."], c: 1},
+        {t: "СССР", q: "В каком году был официально образован Союз Советских Социалистических Республик (СССР)?", a: ["1917 г.", "1922 г.", "1941 г."], c: 1},
+        {t: "1920-е - 1930-е", q: "Что такое 'ликбез', начавшийся в 1920-е годы?", a: ["Строительство заводов", "Ликвидация безграмотности", "Полеты в космос"], c: 1},
+        {t: "ВОВ", q: "Какая крепость первой приняла удар немецких войск 22 июня 1941 года?", a: ["Петропавловская", "Брестская", "Смоленская"], c: 1},
+        {t: "ВОВ", q: "Сколько дней длилась блокада Ленинграда?", a: ["200 дней", "почти 900 дней", "1000 дней"], c: 1},
+        {t: "ВОВ", q: "Какая битва стала началом коренного перелома в войне (зима 1942-1943 гг.)?", a: ["Битва за Москву", "Сталинградская битва", "Курская битва"], c: 1},
+        {t: "ВОВ", q: "Кто водрузил Знамя Победы над Рейхстагом в Берлине?", a: ["Г. Жуков и К. Рокоссовский", "М. Егоров и М. Кантария", "И. Кожедуб и А. Покрышкин"], c: 1}
     ];
 
     let current = 0;
     let score = 0;
-    // Берем 15 случайных вопросов из базы
-    let quiz = database.sort(() => 0.5 - Math.random()).slice(0, 15);
 
-    function display() {
-        const item = quiz[current];
-        document.getElementById('cur').innerText = current + 1;
-        document.getElementById('q-txt').innerText = item.q;
-        const box = document.getElementById('ans-box');
-        box.innerHTML = '';
+    function render() {
+        const item = db[current];
+        document.getElementById('topic-name').innerText = item.t;
+        document.getElementById('q-text').innerText = item.q;
+        document.getElementById('progress').innerText = `Вопрос ${current + 1} из ${db.length}`;
         
-        item.a.forEach((text, i) => {
+        const box = document.getElementById('options');
+        box.innerHTML = '';
+        item.a.forEach((ans, i) => {
             const b = document.createElement('button');
             b.className = 'btn';
-            b.innerText = text;
+            b.innerText = ans;
             b.onclick = () => check(i, b);
             box.appendChild(b);
         });
     }
 
-    function check(i, b) {
-        if (i === quiz[current].c) {
-            b.classList.add('correct');
+    function check(idx, btn) {
+        const btns = document.querySelectorAll('.btn');
+        btns.forEach(b => b.disabled = true);
+        
+        if(idx === db[current].c) {
+            btn.classList.add('correct');
             score++;
             document.getElementById('points').innerText = score;
-            setTimeout(next, 800);
         } else {
-            b.classList.add('wrong');
-            setTimeout(() => b.classList.remove('wrong'), 500);
+            btn.classList.add('wrong');
+            btns[db[current].c].classList.add('correct');
         }
-    }
-
-    function getHint() {
-        const btns = document.querySelectorAll('.btn');
-        btns[quiz[current].c].style.borderColor = 'var(--green)';
-        btns[quiz[current].c].style.background = '#e8f5e9';
-    }
-
-    function next() {
-        current++;
-        if (current < quiz.length) display();
-        else finish();
-    }
-
-    function finish() {
-        document.getElementById('game-zone').style.display = 'none';
-        const fin = document.getElementById('fin-screen');
-        fin.style.display = 'block';
         
-        let medal = "🥉";
-        let rank = "Нужно еще подучить!";
-        if(score >= 14) { medal = "🥇"; rank = "Ты — Великий Историк!"; }
-        else if(score >= 11) { medal = "🥈"; rank = "Отличные знания!"; }
-        
-        document.getElementById('medal').innerText = medal;
-        document.getElementById('rank-txt').innerText = rank;
-        document.getElementById('stats-txt').innerText = `Твой результат: ${score} из ${quiz.length}`;
+        setTimeout(() => {
+            current++;
+            if(current < db.length) render();
+            else showResult();
+        }, 1500);
     }
 
-    display();
+    function showResult() {
+        document.getElementById('q-text').style.display = 'none';
+        document.getElementById('options').style.display = 'none';
+        document.getElementById('topic-name').style.display = 'none';
+        document.getElementById('progress').style.display = 'none';
+        
+        const res = document.getElementById('result');
+        res.style.display = 'block';
+        document.getElementById('result-text').innerText = `Ты набрал ${score} из ${db.length} баллов!`;
+        
+        if(score === db.length) document.getElementById('result-title').innerText = "Легенда истории! 👑";
+        else if(score > 8) document.getElementById('result-title').innerText = "Отличный результат! 🔥";
+        else document.getElementById('result-title').innerText = "Нужно еще подучить 📖";
+    }
+
+    render();
 </script>
+
 </body>
 </html>
