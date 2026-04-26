@@ -2,120 +2,69 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>История России: 4 класс</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История: Великий Квест</title>
     <style>
-        body {
-            background: #0a0e14; color: white; font-family: 'Segoe UI', sans-serif;
-            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
-        }
-        .card {
-            background: #16212e; width: 90%; max-width: 600px; padding: 30px;
-            border-radius: 25px; border: 2px solid #00f2fe; text-align: center;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
-        }
-        .q-text { font-size: 22px; font-weight: bold; margin: 20px 0; min-height: 60px; line-height: 1.3; }
-        .ans-grid { display: grid; gap: 10px; margin-top: 20px; }
-        .btn {
-            background: rgba(255,255,255,0.1); border: 1px solid #4facfe;
-            padding: 15px; border-radius: 12px; color: white; font-size: 16px;
+        :root { --main: #00f2fe; --bg: #0a0e14; --panel: #16212e; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        .container { background: var(--panel); width: 95%; max-width: 600px; padding: 30px; border-radius: 30px; border: 2px solid var(--main); box-shadow: 0 0 40px rgba(0, 242, 254, 0.2); text-align: center; }
+        
+        h1 { color: var(--main); font-size: 28px; margin-bottom: 10px; text-transform: uppercase; }
+        .intro-text { opacity: 0.7; margin-bottom: 30px; }
+        
+        .q-zone { display: none; }
+        .topic-tag { color: var(--main); font-weight: bold; font-size: 14px; letter-spacing: 2px; }
+        .question { font-size: 22px; font-weight: bold; margin: 20px 0; line-height: 1.4; min-height: 80px; }
+        
+        .ans-grid { display: grid; gap: 12px; }
+        .btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 254, 0.3); 
+            padding: 18px; border-radius: 15px; color: white; font-size: 17px; 
             cursor: pointer; transition: 0.2s; text-align: left;
         }
-        .btn:hover { background: #00f2fe; color: black; }
-        .correct { background: #22c55e !important; color: white; }
-        .wrong { background: #ef4444 !important; color: white; }
-        .progress { height: 6px; background: #1a2a3a; border-radius: 10px; margin-top: 25px; overflow: hidden; }
-        .fill { height: 100%; background: #00f2fe; width: 0%; transition: 0.4s; }
-        #start-btn { background: #00f2fe; color: black; padding: 20px; border-radius: 15px; font-weight: bold; cursor: pointer; }
+        .btn:hover { background: var(--main); color: black; transform: scale(1.02); }
+        .correct { background: #22c55e !important; border-color: #22c55e; }
+        .wrong { background: #ef4444 !important; border-color: #ef4444; animation: shake 0.4s; }
+        
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
+        
+        .progress-bar { height: 8px; background: #1a2a3a; border-radius: 10px; margin-top: 30px; overflow: hidden; }
+        .fill { height: 100%; background: var(--main); width: 0%; transition: 0.4s; }
+        
+        #start-btn { background: var(--main); color: black; padding: 20px 40px; border-radius: 50px; font-weight: bold; font-size: 20px; cursor: pointer; border: none; }
+        #start-btn:hover { box-shadow: 0 0 20px var(--main); }
     </style>
 </head>
 <body>
 
-<div class="card" id="main">
-    <div id="start-screen">
-        <h1>ТРЕНАЖЕР ПО ИСТОРИИ</h1>
-        <p>Стр. 77-108 учебника Плешакова</p>
-        <div id="start-btn" onclick="init()">ЗАПУСТИТЬ ТРЕНАЖЕР</div>
+<div class="container">
+    <div id="screen-start">
+        <h1>История России</h1>
+        <p class="intro-text">Миссия: Подготовка к контрольной (стр. 77-108)<br>Готов проверить свои знания?</p>
+        <button id="start-btn" onclick="startGame()">НАЧАТЬ МИССИЮ</button>
     </div>
 
-    <div id="game" style="display:none">
-        <div style="color:#00f2fe; font-weight:bold" id="topic">ЭПОХА</div>
-        <div class="q-text" id="q-txt">Загрузка вопроса...</div>
+    <div id="screen-game" class="q-zone">
+        <div class="topic-tag" id="tag">ЭПОХА</div>
+        <div class="question" id="q-text">Загрузка...</div>
         <div class="ans-grid" id="ans-box"></div>
-        <div class="progress"><div class="fill" id="bar"></div></div>
-        <p id="counter" style="opacity:0.5; font-size:12px; margin-top:10px"></p>
+        <div class="progress-bar"><div class="fill" id="bar"></div></div>
+        <p style="margin-top:15px; font-size:12px; opacity:0.5;">⭐ Очки: <span id="score">0</span> | Вопрос: <span id="num">1</span>/15</p>
     </div>
 
-    <div id="result" style="display:none">
-        <h1 style="color:#ffd700">МИССИЯ ЗАВЕРШЕНА</h1>
-        <p id="final-stats" style="font-size:20px"></p>
-        <button onclick="location.reload()" class="btn" style="width:100%; text-align:center">ПОПРОБОВАТЬ СНОВА</button>
+    <div id="screen-final" style="display:none">
+        <h1 id="rank">КОНЕЦ МИССИИ</h1>
+        <p id="final-stats" style="font-size:24px"></p>
+        <button class="btn" style="width:100%; text-align:center" onclick="location.reload()">ПОВТОРИТЬ ЦИКЛ</button>
     </div>
 </div>
 
 <script>
     const db = [
-        {t:"1812 ГОД", q:"Главный враг России в войне 1812 года?", a:["Наполеон", "Гитлер", "Карл XII"], c:0},
-        {t:"1812 ГОД", q:"В каком селе Кутузов решил оставить Москву?", a:["Бородино", "Фили", "Тарутино"], c:1},
-        {t:"1812 ГОД", q:"Что случилось с Москвой, когда туда вошли французы?", a:["Она сдалась", "Она сгорела", "Там был праздник"], c:1},
-        {t:"XIX ВЕК", q:"В каком году отменили крепостное право?", a:["1812", "1861", "1917"], c:1},
-        {t:"XIX ВЕК", q:"Царь-освободитель — это...", a:["Александр II", "Николай II", "Петр I"], c:0},
-        {t:"XIX ВЕК", q:"Транссибирская магистраль — это самая длинная...", a:["Стена", "Железная дорога", "Река"], c:1},
-        {t:"XX ВЕК", q:"В каком году в России пал царь и была революция?", a:["1905", "1917", "1945"], c:1},
-        {t:"XX ВЕК", q:"Что такое СССР?", a:["Название завода", "Союз республик", "Марка машины"], c:1},
-        {t:"1930-е", q:"Как называли ликвидацию безграмотности?", a:["Ликбез", "Пятилетка", "Субботник"], c:0},
-        {t:"1930-е", q:"Где в 1935 году открыли первое метро?", a:["В Москве", "В Ленинграде", "В Париже"], c:0},
-        {t:"ВОВ", q:"Дата начала Великой Отечественной войны?", a:["22 июня 1941", "1 сентября 1939", "9 мая 1945"], c:0},
-        {t:"ВОВ", q:"Крепость, которая первой приняла бой в 1941 году?", a:["Брестская", "Киевская", "Московская"], c:0},
-        {t:"ВОВ", q:"Как называли дорогу по льду в Ленинград?", a:["Дорога жизни", "Путь к победе", "Снежный путь"], c:0},
-        {t:"ВОВ", q:"Где было самое большое танковое сражение?", a:["Под Москвой", "На Курской дуге", "В Берлине"], c:1},
-        {t:"ВОВ", q:"Маршал Победы — это...", a:["Кутузов", "Жуков", "Суворов"], c:1},
-        {t:"ВОВ", q:"Кто водрузил Знамя Победы над Рейхстагом?", a:["Егоров и Кантария", "Жуков и Сталин", "Гагарин"], c:0},
-        {t:"ВОВ", q:"Город, который стоял в блокаде почти 900 дней?", a:["Ленинград", "Сталинград", "Севастополь"], c:0},
-        {t:"ВОВ", q:"В каком месяце мы празднуем День Победы?", a:["Апрель", "Май", "Июнь"], c:1}
-    ];
-
-    let curr = 0, score = 0, quiz = [];
-
-    function init() {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('game').style.display = 'block';
-        quiz = db.sort(() => 0.5 - Math.random()).slice(0, 15);
-        show();
-    }
-
-    function show() {
-        const item = quiz[curr];
-        document.getElementById('topic').innerText = item.t;
-        document.getElementById('q-txt').innerText = item.q;
-        document.getElementById('counter').innerText = `Вопрос ${curr + 1} из ${quiz.length}`;
-        document.getElementById('bar').style.width = (curr / quiz.length) * 100 + '%';
-        const box = document.getElementById('ans-box');
-        box.innerHTML = '';
-        item.a.forEach((t, i) => {
-            const b = document.createElement('button');
-            b.className = 'btn'; b.innerText = t;
-            b.onclick = () => check(i, b);
-            box.appendChild(b);
-        });
-    }
-
-    function check(i, b) {
-        const btns = document.querySelectorAll('.btn');
-        btns.forEach(btn => btn.style.pointerEvents = 'none');
-        if(i === quiz[curr].c) { b.classList.add('correct'); score++; }
-        else { b.classList.add('wrong'); btns[quiz[curr].c].classList.add('correct'); }
-        setTimeout(() => {
-            curr++;
-            if(curr < quiz.length) show();
-            else finish();
-        }, 1200);
-    }
-
-    function finish() {
-        document.getElementById('game').style.display = 'none';
-        document.getElementById('result').style.display = 'block';
-        document.getElementById('final-stats').innerText = `Очки: ${score} из ${quiz.length}`;
-    }
-</script>
-</body>
-</html>
+        {t:"1812 ГОД", q:"В каком году Наполеон напал на Россию?", a:["1703", "1812", "1914"], c:1},
+        {t:"1812 ГОД", q:"Кто был главнокомандующим русской армии?", a:["Суворов", "Кутузов", "Жуков"], c:1},
+        {t:"1812 ГОД", q:"Главная битва войны 1812 года — это...", a:["Бородинская", "Сталинградская", "Ледовое побоище"], c:0},
+        {t:"1812 ГОД", q:"Где Кутузов принял решение оставить Москву?", a:["В Кремле", "В избе в деревне Фили", "В Петербурге"], c:1},
+        {t:"1812 ГОД", q:"Что случилось с Москвой при Наполеоне?", a:["Её украсили", "Она сгорела в пожарах", "Ничего не изменилось"], c:1},
+        {t:"1812 ГОД", q:"Как называли народных мстителей, воевавших в тылу врага?", a:["П
