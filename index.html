@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Викторина: Путешествие во времени</title>
+    <title>Супер-подготовка к КР: История</title>
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,144 +15,139 @@
             color: #fff;
         }
         .game-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 30px;
-            padding: 40px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            background: #ffffff;
+            border-radius: 25px;
+            padding: 30px;
+            width: 95%;
+            max-width: 600px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             color: #333;
             text-align: center;
-            border: 8px solid #ffd700;
+            position: relative;
         }
-        .header {
-            font-size: 28px;
-            color: #764ba2;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
+        .header { font-size: 24px; color: #1e3c72; margin-bottom: 15px; font-weight: bold; }
+        .progress-bar { font-size: 14px; color: #888; margin-bottom: 10px; }
         .coin-box {
-            background: #fffae6;
-            padding: 10px 20px;
-            border-radius: 50px;
+            background: #fff9c4;
+            padding: 8px 15px;
+            border-radius: 20px;
             display: inline-block;
             font-weight: bold;
-            color: #d4af37;
-            border: 2px solid #ffd700;
+            color: #f57f17;
             margin-bottom: 20px;
+            border: 2px solid #fbc02d;
         }
-        .question-text {
-            font-size: 20px;
-            margin-bottom: 25px;
-            line-height: 1.4;
-        }
+        .question-text { font-size: 19px; margin-bottom: 20px; font-weight: 600; min-height: 50px; }
         .btn {
-            background: #4facfe;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 15px;
-            font-size: 18px;
-            margin: 10px 0;
+            background: #eceff1;
+            color: #263238;
+            border: 2px solid #cfd8dc;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            margin: 8px 0;
             width: 100%;
             cursor: pointer;
-            transition: transform 0.2s, background 0.3s;
-            box-shadow: 0 4px 0 #3884c7;
+            transition: all 0.2s;
+            text-align: center;
         }
-        .btn:hover {
-            background: #00f2fe;
-            transform: translateY(-2px);
-        }
-        .btn:active {
-            transform: translateY(2px);
-            box-shadow: none;
-        }
+        .btn:hover { background: #e3f2fd; border-color: #2196f3; transform: scale(1.02); }
         .hidden { display: none; }
-        #feedback {
-            height: 30px;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-        .final-icon { font-size: 80px; }
+        #feedback { height: 25px; margin-top: 15px; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
 
 <div class="game-card">
-    <div class="header">⏳ Машина Времени</div>
-    <div class="coin-box">Монеты: <span id="coins">0</span> 💰</div>
+    <div class="header">🎓 Тренажер к контрольной</div>
+    <div class="progress-bar" id="progress">Вопрос 1 из 15</div>
+    <div class="coin-box">Счет: <span id="coins">0</span> ⭐</div>
 
     <div id="quiz-content">
-        <div id="q-container">
-            <div class="question-text" id="q-text">Загрузка вопроса...</div>
-            <div id="options"></div>
-        </div>
+        <div id="q-text" class="question-text">Загрузка...</div>
+        <div id="options"></div>
         <div id="feedback"></div>
     </div>
 
     <div id="final-screen" class="hidden">
-        <div class="final-icon">🏆</div>
-        <h2>Блестяще!</h2>
-        <p>Ты настоящий историк. Все задания выполнены!</p>
-        <button class="btn" onclick="location.reload()" style="background: #27ae60; box-shadow: 0 4px 0 #1e8449;">Играть еще раз</button>
+        <h2 style="color: #2e7d32;">Подготовка завершена!</h2>
+        <p id="final-stats"></p>
+        <button class="btn" onclick="location.reload()" style="background: #1e3c72; color: white;">Пройти еще раз</button>
     </div>
 </div>
 
 <script>
-    const questions = [
-        { q: "Кто командовал русской армией в 1812 году?", a: ["М. Кутузов", "Петр I", "А. Суворов"], correct: 0 },
-        { q: "В каком году отменили крепостное право?", a: ["1147 г.", "1861 г.", "1945 г."], correct: 1 },
-        { q: "Кто был последним императором России?", a: ["Иван Грозный", "Николай II", "Петр III"], correct: 1 },
-        { q: "Как называли масштабную стройку заводов в 1930-е?", a: ["Индустриализация", "Олимпиада", "Революция"], correct: 0 },
-        { q: "В каком месяце мы празднуем День Победы?", a: ["В июне", "В марте", "В мае"], correct: 2 },
-        { q: "Кто первым в мире полетел в космос?", a: ["Нил Армстронг", "Юрий Гагарин", "Белка и Стрелка"], correct: 1 }
+    const allQuestions = [
+        // 1812 год
+        { q: "В каком году произошла Отечественная война с Наполеоном?", a: ["1812", "1941", "1703"], c: 0 },
+        { q: "Как называлось самое крупное сражение войны 1812 года?", a: ["Курская дуга", "Бородинское", "Ледовое побоище"], c: 1 },
+        { q: "Кто был главнокомандующим русской армии в 1812 году?", a: ["Суворов", "Кутузов", "Жуков"], c: 1 },
+        // 19 век
+        { q: "В каком году было отменено крепостное право?", a: ["1861", "1812", "1917"], c: 0 },
+        { q: "Какой город стал столицей России в 19 веке?", a: ["Москва", "Санкт-Петербург", "Киев"], c: 1 },
+        { q: "Как называли царя Александра II?", a: ["Грозный", "Великий", "Освободитель"], c: 2 },
+        // Начало 20 века
+        { q: "Кто был последним императором России?", a: ["Николай II", "Петр I", "Александр III"], c: 0 },
+        { q: "В каком году в России произошла революция?", a: ["1917", "1812", "1945"], c: 0 },
+        // 1920-1930
+        { q: "Как называлось новое государство, возникшее в 1922 году?", a: ["Российская Империя", "СССР", "Древняя Русь"], c: 1 },
+        { q: "Что такое индустриализация?", a: ["Полет в космос", "Строительство заводов и фабрик", "Посадка лесов"], c: 1 },
+        // ВОВ
+        { q: "Когда началась Великая Отечественная война?", a: ["22 июня 1941", "1 сентября 1939", "9 мая 1945"], c: 0 },
+        { q: "Сколько дней длилась блокада Ленинграда?", a: ["100 дней", "почти 900 дней", "один месяц"], c: 1 },
+        { q: "В каком городе состоялся первый Парад Победы?", a: ["В Берлине", "В Москве", "В Париже"], c: 1 },
+        // Космос
+        { q: "Как назывался корабль Юрия Гагарина?", a: ["Восток-1", "Союз", "Аполлон"], c: 0 },
+        { q: "Кто первым из животных успешно вернулся из космоса?", a: ["Стрелка и Бобик", "Белка и Стрелка", "Мухтар"], c: 1 }
     ];
 
+    // Перемешивание вопросов
+    const questions = allQuestions.sort(() => Math.random() - 0.5);
     let currentQ = 0;
     let score = 0;
 
-    function renderQuestion() {
+    function render() {
         const data = questions[currentQ];
+        document.getElementById('progress').innerText = `Вопрос ${currentQ + 1} из ${questions.length}`;
         document.getElementById('q-text').innerText = data.q;
-        const optionsDiv = document.getElementById('options');
-        optionsDiv.innerHTML = '';
+        const optDiv = document.getElementById('options');
+        optDiv.innerHTML = '';
         
-        data.a.forEach((ans, index) => {
-            const button = document.createElement('button');
-            button.className = 'btn';
-            button.innerText = ans;
-            button.onclick = () => check(index);
-            optionsDiv.appendChild(button);
+        data.a.forEach((ans, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = ans;
+            b.onclick = () => check(i);
+            optDiv.appendChild(b);
         });
     }
 
-    function check(index) {
-        const feedback = document.getElementById('feedback');
-        if(index === questions[currentQ].correct) {
+    function check(i) {
+        const f = document.getElementById('feedback');
+        if(i === questions[currentQ].c) {
             score++;
             document.getElementById('coins').innerText = score;
-            feedback.innerText = "Правильно! ✨";
-            feedback.style.color = "#27ae60";
-            setTimeout(next, 1000);
+            f.innerText = "Верно! 🌟";
+            f.style.color = "#2e7d32";
+            setTimeout(next, 800);
         } else {
-            feedback.innerText = "Ой, попробуй другой вариант! 🤔";
-            feedback.style.color = "#e74c3c";
+            f.innerText = "Ошибка! Подумай еще 📝";
+            f.style.color = "#d32f2f";
         }
     }
 
     function next() {
         currentQ++;
         document.getElementById('feedback').innerText = "";
-        if(currentQ < questions.length) {
-            renderQuestion();
-        } else {
+        if(currentQ < questions.length) render();
+        else {
             document.getElementById('quiz-content').classList.add('hidden');
             document.getElementById('final-screen').classList.remove('hidden');
+            document.getElementById('final-stats').innerText = `Твой результат: ${score} из ${questions.length} правильных ответов.`;
         }
     }
 
-    renderQuestion();
+    render();
 </script>
-
 </body>
 </html>
