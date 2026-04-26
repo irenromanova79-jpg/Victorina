@@ -2,64 +2,63 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>История России: Великий Тренажер</title>
+    <title>История: Уровень ЭКСПЕРТ</title>
     <style>
-        :root {
-            --primary: #f59e0b; --bg: #0f172a; --card: #1e293b;
-            --text: #f8fafc; --success: #10b981; --error: #ef4444;
-        }
+        :root { --neon: #00f2fe; --pink: #ff00de; --bg: #06090f; }
         body {
-            background: var(--bg); color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; overflow-x: hidden;
+            background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif;
+            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            background-image: linear-gradient(to bottom, #06090f, #1a2a3a);
         }
-        .game-wrap {
-            width: 100%; max-width: 700px; padding: 20px;
-            animation: slideIn 0.6s ease-out;
+        .container {
+            width: 90%; max-width: 700px; background: rgba(255,255,255,0.03);
+            border-radius: 40px; padding: 40px; border: 1px solid rgba(0, 242, 254, 0.2);
+            backdrop-filter: blur(20px); box-shadow: 0 0 60px rgba(0, 242, 254, 0.1);
         }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .main-card {
-            background: var(--card); border-radius: 30px; padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            position: relative; overflow: hidden;
+        .header { display: flex; justify-content: space-between; font-weight: bold; color: var(--neon); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+        .q-card { font-size: 26px; font-weight: 800; margin-bottom: 30px; line-height: 1.2; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .hint { color: #8899a6; font-size: 14px; margin-bottom: 20px; font-style: italic; }
+        .grid { display: grid; gap: 15px; }
+        .btn {
+            background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1);
+            padding: 20px; border-radius: 20px; color: white; font-size: 18px;
+            cursor: pointer; transition: 0.2s; text-align: left;
         }
-        .main-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .badge { background: rgba(245, 158, 11, 0.15); color: var(--primary); padding: 6px 16px; border-radius: 50px; font-weight: bold; font-size: 14px; text-transform: uppercase; }
-        
-        .q-text { font-size: 24px; font-weight: 700; margin-bottom: 30px; line-height: 1.4; min-height: 100px; }
-        
-        .ans-grid { display: grid; gap: 15px; }
-        .ans-btn {
-            background: rgba(255, 255, 255, 0.03); border: 2px solid rgba(255, 255, 255, 0.1);
-            padding: 20px; border-radius: 18px; color: var(--text); font-size: 18px;
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: left; position: relative;
-        }
-        .ans-btn:hover { background: rgba(255, 255, 255, 0.07); border-color: var(--primary); transform: translateX(10px); }
-        .ans-btn.correct { background: var(--success); border-color: var(--success); transform: scale(1.02); }
-        .ans-btn.wrong { background: var(--error); border-color: var(--error); animation: shake 0.4s; }
-
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
-
-        .progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 40px; }
-        .progress-bar { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.5s ease; box-shadow: 0 0 15px var(--primary); }
-
-        #final { display: none; text-align: center; }
-        .stat-circle { font-size: 80px; margin-bottom: 20px; }
-        .restart-btn { background: var(--primary); color: #000; border: none; padding: 15px 40px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 20px; }
+        .btn:hover { background: rgba(0, 242, 254, 0.15); border-color: var(--neon); transform: scale(1.02); }
+        .correct { background: #00ff88 !important; color: #000; font-weight: bold; }
+        .wrong { background: #ff4d4d !important; animation: shake 0.4s; }
+        @keyframes shake { 0%,100% {transform:translateX(0)} 25% {transform:translateX(-10px)} 75% {transform:translateX(10px)} }
+        .progress-bar { width: 100%; height: 10px; background: #111; border-radius: 20px; margin-top: 40px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--neon); width: 0%; transition: 0.4s; box-shadow: 0 0 20px var(--neon); }
     </style>
 </head>
 <body>
 
-<div class="game-wrap">
-    <div class="main-card" id="quiz-card">
-        <div id="game-view">
+<div class="container" id="box">
+    <div id="game">
+        <div class="header">
+            <span id="tag">ЭПОХА</span>
+            <span>⭐ <span id="pts">0</span></span>
+        </div>
+        <div class="q-card" id="q-txt">Загрузка миссии...</div>
+        <div class="hint" id="hint-txt"></div>
+        <div class="grid" id="ans"></div>
+        <div class="progress-bar"><div class="bar-fill" id="bar"></div></div>
+    </div>
+
+    <div id="result" style="display:none; text-align:center;">
+        <h1 style="font-size: 50px; color: var(--neon);">ГОТОВО!</h1>
+        <p id="final-score" style="font-size: 24px;"></p>
+        <button class="btn" style="width:100%; text-align:center;" onclick="location.reload()">ПЕРЕЗАГРУЗКА</button>
+    </div>
+</div>
+
+<script>
+    const db = [
+        // 1812
+        {t:"1812 ГОД", q:"Кто напал на Россию в 1812 году?", a:["Французы", "Немцы", "Шведы"], c:0, h:"Подсказка: Императором у них был Наполеон"},
+        {t:"1812 ГОД", q:"Главная битва войны 1812 года состоялась у села:", a:["Бородино", "Тарутино", "Фили"], c:0, h:"Подсказка: Михаил Лермонтов написал про это стихотворение"},
+        {t:"1812 ГОД", q:"На совете в Филях Кутузов решил:", a:["Биться до конца", "Оставить Москву, чтобы спасти армию", "Сдаться Наполеону"], c:1, h:"Подсказка: Это был очень трудный выбор"},
+        {t:"1812 ГОД", q:"Памятник победе над Наполеоном в Москве — это:", a:["Кремль", "Храм Христа Спасителя", "Большой театр"], c:1, h:"Подсказка: Его построили на народные деньги"},
+        // XIX век
+        {t:"XIX ВЕК", q:"Что отменили в 1861 году?", a:["Интернет", "Крепостное право", "Налоги"], c:1, h:"Подсказка: После этого крестьяне стали свобод
