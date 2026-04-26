@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -75,4 +74,73 @@
         {q: "Как назывался корабль Юрия Гагарина?", a: ["Восток-1", "Союз", "Мир"], c: 0},
         {q: "Кто первым вышел в открытый космос из корабля?", a: ["Юрий Гагарин", "Алексей Леонов", "Валентина Терешкова"], c: 1},
         {q: "Первая в мире женщина-космонавт?", a: ["Светлана Савицкая", "Валентина Терешкова", "Марина Попович"], c: 1},
-        {q: "С какого космодрома взлетел первый человек?", a: ["Плесецк", "Байконур", "Восточный"], c:
+        {q: "С какого космодрома взлетел первый человек?", a: ["Плесецк", "Байконур", "Восточный"], c: 1},
+        // Современность
+        {q: "В каком году СССР перестал существовать?", a: ["1980", "1991", "2000"], c: 1},
+        {q: "Кто был первым президентом России?", a: ["М. Горбачев", "Б. Ельцин", "В. Путин"], c: 1}
+    ];
+
+    let current = 0;
+    let score = 0;
+    // Берем 15 случайных вопросов из базы
+    let quiz = database.sort(() => 0.5 - Math.random()).slice(0, 15);
+
+    function display() {
+        const item = quiz[current];
+        document.getElementById('cur').innerText = current + 1;
+        document.getElementById('q-txt').innerText = item.q;
+        const box = document.getElementById('ans-box');
+        box.innerHTML = '';
+        
+        item.a.forEach((text, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = text;
+            b.onclick = () => check(i, b);
+            box.appendChild(b);
+        });
+    }
+
+    function check(i, b) {
+        if (i === quiz[current].c) {
+            b.classList.add('correct');
+            score++;
+            document.getElementById('points').innerText = score;
+            setTimeout(next, 800);
+        } else {
+            b.classList.add('wrong');
+            setTimeout(() => b.classList.remove('wrong'), 500);
+        }
+    }
+
+    function getHint() {
+        const btns = document.querySelectorAll('.btn');
+        btns[quiz[current].c].style.borderColor = 'var(--green)';
+        btns[quiz[current].c].style.background = '#e8f5e9';
+    }
+
+    function next() {
+        current++;
+        if (current < quiz.length) display();
+        else finish();
+    }
+
+    function finish() {
+        document.getElementById('game-zone').style.display = 'none';
+        const fin = document.getElementById('fin-screen');
+        fin.style.display = 'block';
+        
+        let medal = "🥉";
+        let rank = "Нужно еще подучить!";
+        if(score >= 14) { medal = "🥇"; rank = "Ты — Великий Историк!"; }
+        else if(score >= 11) { medal = "🥈"; rank = "Отличные знания!"; }
+        
+        document.getElementById('medal').innerText = medal;
+        document.getElementById('rank-txt').innerText = rank;
+        document.getElementById('stats-txt').innerText = `Твой результат: ${score} из ${quiz.length}`;
+    }
+
+    display();
+</script>
+</body>
+</html>
