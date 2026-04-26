@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Машина Времени: История России</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f9ff; color: #333; display: flex; justify-content: center; padding: 20px; }
+        .container { max-width: 600px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 4px solid #3498db; }
+        h1 { color: #2c3e50; text-align: center; font-size: 24px; }
+        .question { display: none; }
+        .question.active { display: block; }
+        .btn { background: #3498db; color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 5px 0; width: 100%; text-align: left; transition: 0.2s; }
+        .btn:hover { background: #2980b9; }
+        .score-panel { text-align: center; margin-bottom: 20px; font-weight: bold; color: #e67e22; }
+        .prize-icon { font-size: 50px; display: block; margin: 20px 0; }
+        #final-screen { display: none; text-align: center; }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="score-panel">Твои монеты: <span id="coins">0</span> 💰</div>
+    
+    <div id="game-box">
+        <div class="question active" id="q1">
+            <h3>1. 1812 год. Кто командовал русской армией в Бородинском сражении?</h3>
+            <button class="btn" onclick="check(1, true)">Михаил Кутузов</button>
+            <button class="btn" onclick="check(1, false)">Петр Первый</button>
+            <button class="btn" onclick="check(1, false)">Александр Суворов</button>
+        </div>
+
+        <div class="question" id="q2">
+            <h3>2. 19 век. Какой царь отменил крепостное право в 1861 году?</h3>
+            <button class="btn" onclick="check(2, false)">Иван Грозный</button>
+            <button class="btn" onclick="check(2, true)">Александр II (Освободитель)</button>
+            <button class="btn" onclick="check(2, false)">Николай II</button>
+        </div>
+
+        <div class="question" id="q3">
+            <h3>3. Россия в 20 веке. Как назывался последний российский император?</h3>
+            <button class="btn" onclick="check(3, true)">Николай II</button>
+            <button class="btn" onclick="check(3, false)">Павел I</button>
+            <button class="btn" onclick="check(3, false)">Владимир Ленин</button>
+        </div>
+
+        <div class="question" id="q4">
+            <h3>4. 1920-1930 годы. Как называлась огромная стройка по всей стране?</h3>
+            <button class="btn" onclick="check(4, false)">Перестройка</button>
+            <button class="btn" onclick="check(4, true)">Индустриализация</button>
+            <button class="btn" onclick="check(4, false)">Олимпийские игры</button>
+        </div>
+
+        <div class="question" id="q5">
+            <h3>5. Великая Отечественная война. В каком месяце мы празднуем День Победы?</h3>
+            <button class="btn" onclick="check(5, false)">В январе</button>
+            <button class="btn" onclick="check(5, false)">В декабре</button>
+            <button class="btn" onclick="check(5, true)">В мае</button>
+        </div>
+
+        <div class="question" id="q6">
+            <h3>6. Путь в космос. Кто стал первым человеком, полетевшим на орбиту?</h3>
+            <button class="btn" onclick="check(6, true)">Юрий Гагарин</button>
+            <button class="btn" onclick="check(6, false)">Нил Армстронг</button>
+            <button class="btn" onclick="check(6, false)">Алексей Леонов</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div id="final-screen">
+        <h2>Ура! Путешествие окончено!</h2>
+        <span class="prize-icon">🏆</span>
+        <p>Ты собрал все монеты и заслужил звание <b>Знатока Истории</b>!</p>
+        <button class="btn" style="text-align:center" onclick="location.reload()">Начать заново</button>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    let score = 0;
+    const totalQuestions = 6;
+
+    function check(step, isCorrect) {
+        const feedback = document.getElementById('feedback');
+        if (isCorrect) {
+            score++;
+            document.getElementById('coins').innerText = score;
+            feedback.style.color = "#27ae60";
+            feedback.innerText = "Правильно! +1 монета";
+            
+            setTimeout(() => {
+                nextStep(step);
+            }, 1000);
+        } else {
+            feedback.style.color = "#e74c3c";
+            feedback.innerText = "Попробуй еще раз!";
+        }
+    }
+
+    function nextStep(step) {
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('q' + step).classList.remove('active');
+        currentStep++;
+        
+        if (currentStep <= totalQuestions) {
+            document.getElementById('q' + currentStep).classList.add('active');
+        } else {
+            document.getElementById('game-box').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
