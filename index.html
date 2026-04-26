@@ -2,69 +2,129 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>История: Великий Квест</title>
+    <title>История: Миссия выполнима</title>
     <style>
-        :root { --main: #00f2fe; --bg: #0a0e14; --panel: #16212e; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        
-        .container { background: var(--panel); width: 95%; max-width: 600px; padding: 30px; border-radius: 30px; border: 2px solid var(--main); box-shadow: 0 0 40px rgba(0, 242, 254, 0.2); text-align: center; }
-        
-        h1 { color: var(--main); font-size: 28px; margin-bottom: 10px; text-transform: uppercase; }
-        .intro-text { opacity: 0.7; margin-bottom: 30px; }
-        
-        .q-zone { display: none; }
-        .topic-tag { color: var(--main); font-weight: bold; font-size: 14px; letter-spacing: 2px; }
-        .question { font-size: 22px; font-weight: bold; margin: 20px 0; line-height: 1.4; min-height: 80px; }
-        
-        .ans-grid { display: grid; gap: 12px; }
-        .btn { 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 254, 0.3); 
-            padding: 18px; border-radius: 15px; color: white; font-size: 17px; 
-            cursor: pointer; transition: 0.2s; text-align: left;
-        }
-        .btn:hover { background: var(--main); color: black; transform: scale(1.02); }
-        .correct { background: #22c55e !important; border-color: #22c55e; }
-        .wrong { background: #ef4444 !important; border-color: #ef4444; animation: shake 0.4s; }
-        
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
-        
-        .progress-bar { height: 8px; background: #1a2a3a; border-radius: 10px; margin-top: 30px; overflow: hidden; }
-        .fill { height: 100%; background: var(--main); width: 0%; transition: 0.4s; }
-        
-        #start-btn { background: var(--main); color: black; padding: 20px 40px; border-radius: 50px; font-weight: bold; font-size: 20px; cursor: pointer; border: none; }
-        #start-btn:hover { box-shadow: 0 0 20px var(--main); }
+        :root { --accent: #00f2fe; --bg: #0d1117; }
+        body { background: var(--bg); color: white; font-family: system-ui, -apple-system, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .box { background: #161b22; width: 90%; max-width: 600px; padding: 35px; border-radius: 24px; border: 1px solid #30363d; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .q-text { font-size: 22px; font-weight: 700; margin-bottom: 30px; min-height: 80px; display: flex; align-items: center; justify-content: center; line-height: 1.4; }
+        .grid { display: grid; gap: 12px; }
+        .btn { background: #21262d; border: 1px solid #30363d; padding: 18px; border-radius: 12px; color: white; font-size: 17px; cursor: pointer; transition: 0.2s; text-align: left; }
+        .btn:hover { background: #30363d; border-color: var(--accent); }
+        .correct { background: #238636 !important; border-color: #2ea043 !important; }
+        .wrong { background: #da3633 !important; border-color: #f85149 !important; animation: shake 0.4s; }
+        @keyframes shake { 0%,100% {transform:translateX(0)} 25% {transform:translateX(-8px)} 75% {transform:translateX(8px)} }
+        .progress { height: 6px; background: #21262d; border-radius: 10px; margin-top: 30px; overflow: hidden; }
+        .fill { height: 100%; background: var(--accent); width: 0%; transition: 0.4s; box-shadow: 0 0 15px var(--accent); }
+        .meta { display: flex; justify-content: space-between; font-size: 12px; color: #8b949e; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        #start-screen { display: block; }
+        #game-screen { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="screen-start">
-        <h1>История России</h1>
-        <p class="intro-text">Миссия: Подготовка к контрольной (стр. 77-108)<br>Готов проверить свои знания?</p>
-        <button id="start-btn" onclick="startGame()">НАЧАТЬ МИССИЮ</button>
+<div class="box">
+    <div id="start-screen">
+        <h1 style="color:var(--accent)">ИСТОРИЧЕСКИЙ КВЕСТ</h1>
+        <p style="color:#8b949e">Проверка знаний по стр. 77-108<br>(Наполеон, Революция, СССР, ВОВ)</p>
+        <button class="btn" style="width:100%; text-align:center; background:var(--accent); color:black; font-weight:bold; margin-top:20px" id="init-btn">НАЧАТЬ ИГРУ</button>
     </div>
 
-    <div id="screen-game" class="q-zone">
-        <div class="topic-tag" id="tag">ЭПОХА</div>
-        <div class="question" id="q-text">Загрузка...</div>
-        <div class="ans-grid" id="ans-box"></div>
-        <div class="progress-bar"><div class="fill" id="bar"></div></div>
-        <p style="margin-top:15px; font-size:12px; opacity:0.5;">⭐ Очки: <span id="score">0</span> | Вопрос: <span id="num">1</span>/15</p>
+    <div id="game-screen">
+        <div class="meta">
+            <span id="topic">Эпоха</span>
+            <span>Счет: <span id="score">0</span></span>
+        </div>
+        <div class="q-text" id="q-txt">Загрузка...</div>
+        <div class="grid" id="ans-box"></div>
+        <div class="progress"><div class="fill" id="bar"></div></div>
     </div>
 
-    <div id="screen-final" style="display:none">
-        <h1 id="rank">КОНЕЦ МИССИИ</h1>
-        <p id="final-stats" style="font-size:24px"></p>
-        <button class="btn" style="width:100%; text-align:center" onclick="location.reload()">ПОВТОРИТЬ ЦИКЛ</button>
+    <div id="final-screen" style="display:none">
+        <h1 id="result-msg">Конец миссии</h1>
+        <p id="stats" style="font-size:20px; margin:20px 0"></p>
+        <button onclick="location.reload()" class="btn" style="width:100%; text-align:center">ПРОЙТИ ЕЩЕ РАЗ</button>
     </div>
 </div>
 
 <script>
+    // База данных вопросов (расширенная)
     const db = [
-        {t:"1812 ГОД", q:"В каком году Наполеон напал на Россию?", a:["1703", "1812", "1914"], c:1},
-        {t:"1812 ГОД", q:"Кто был главнокомандующим русской армии?", a:["Суворов", "Кутузов", "Жуков"], c:1},
-        {t:"1812 ГОД", q:"Главная битва войны 1812 года — это...", a:["Бородинская", "Сталинградская", "Ледовое побоище"], c:0},
-        {t:"1812 ГОД", q:"Где Кутузов принял решение оставить Москву?", a:["В Кремле", "В избе в деревне Фили", "В Петербурге"], c:1},
-        {t:"1812 ГОД", q:"Что случилось с Москвой при Наполеоне?", a:["Её украсили", "Она сгорела в пожарах", "Ничего не изменилось"], c:1},
-        {t:"1812 ГОД", q:"Как называли народных мстителей, воевавших в тылу врага?", a:["П
+        {t:"1812 ГОД", q:"Кто командовал русской армией в 1812 году?", a:["Суворов", "Кутузов", "Жуков"], c:1},
+        {t:"1812 ГОД", q:"Где произошло самое масштабное сражение войны?", a:["Под Полтавой", "При Бородино", "У реки Калки"], c:1},
+        {t:"1812 ГОД", q:"Почему Кутузов решил сдать Москву без боя?", a:["Чтобы спасти армию", "Он испугался", "Французы были сильнее"], c:0},
+        {t:"1812 ГОД", q:"Что построили в Москве в честь победы над Наполеоном?", a:["Метро", "Храм Христа Спасителя", "Большой театр"], c:1},
+        {t:"XIX ВЕК", q:"В каком году отменили крепостное право?", a:["1812", "1861", "1917"], c:1},
+        {t:"XIX ВЕК", q:"Александра II прозвали Освободителем за то, что он...", a:["Выиграл войну", "Освободил крестьян", "Открыл школы"], c:1},
+        {t:"XIX ВЕК", q:"Транссибирская магистраль соединила Москву и:", a:["Владивосток", "Париж", "Берлин"], c:0},
+        {t:"XX ВЕК", q:"В каком году началась Первая мировая война?", a:["1914", "1917", "1941"], c:0},
+        {t:"XX ВЕК", q:"Последний русский император — это...", a:["Петр I", "Николай II", "Александр III"], c:1},
+        {t:"XX ВЕК", q:"Революция в России произошла в...", a:["1905 году", "1917 году", "1922 году"], c:1},
+        {t:"СССР", q:"Что такое Ликбез?", a:["Ликвидация безграмотности", "Постройка заводов", "Новая мода"], c:0},
+        {t:"СССР", q:"В каком году открылось московское метро?", a:["1922", "1935", "1941"], c:1},
+        {t:"ВОВ", q:"Когда фашистская Германия напала на СССР?", a:["1 сентября 1939", "22 июня 1941", "9 мая 1945"], c:1},
+        {t:"ВОВ", q:"Какая крепость первой приняла на себя удар?", a:["Смоленская", "Брестская", "Киевская"], c:1},
+        {t:"ВОВ", q:"Дорога Жизни вела в осажденный...", a:["Ленинград", "Сталинград", "Севастополь"], c:0},
+        {t:"ВОВ", q:"Где была крупнейшая танковая битва?", a:["Под Москвой", "На Курской дуге", "В Берлине"], c:1},
+        {t:"ВОВ", q:"Маршал Победы — это...", a:["Конев", "Жуков", "Рокоссовский"], c:1},
+        {t:"ВОВ", q:"Кто водрузил знамя Победы над Рейхстагом?", a:["Жуков и Сталин", "Егоров и Кантария", "Матросов"], c:1},
+        {t:"ВОВ", q:"План нападения на СССР назывался:", a:["Барбаросса", "Тайфун", "Ост"], c:0},
+        {t:"ВОВ", q:"Сколько дней длилась блокада Ленинграда?", a:["500", "почти 900", "1200"], c:1}
+    ];
+
+    let current = 0, score = 0, session = [];
+
+    // Гарантированный запуск после загрузки страницы
+    window.onload = function() {
+        document.getElementById('init-btn').onclick = function() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            session = db.sort(() => 0.5 - Math.random()).slice(0, 15);
+            render();
+        };
+    };
+
+    function render() {
+        const item = session[current];
+        document.getElementById('topic').innerText = item.t;
+        document.getElementById('q-txt').innerText = item.q;
+        document.getElementById('bar').style.width = (current / session.length) * 100 + '%';
+        
+        const box = document.getElementById('ans-box');
+        box.innerHTML = '';
+        
+        item.a.forEach((txt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = txt;
+            b.onclick = () => {
+                const btns = document.querySelectorAll('.btn');
+                btns.forEach(btn => btn.style.pointerEvents = 'none');
+                if(i === item.c) {
+                    b.classList.add('correct');
+                    score++;
+                    document.getElementById('score').innerText = score;
+                } else {
+                    b.classList.add('wrong');
+                    btns[item.c].classList.add('correct');
+                }
+                setTimeout(() => {
+                    current++;
+                    if(current < session.length) render();
+                    else finish();
+                }, 1300);
+            };
+            box.appendChild(b);
+        });
+    }
+
+    function finish() {
+        document.getElementById('game-screen').style.display = 'none';
+        const fin = document.getElementById('final-screen');
+        fin.style.display = 'block';
+        document.getElementById('stats').innerText = `Твой результат: ${score} из ${session.length}`;
+        document.getElementById('result-msg').innerText = score > 12 ? "Ты настоящий историк! 🎓" : "Хорошая работа! 📚";
+    }
+</script>
+</body>
+</html>
