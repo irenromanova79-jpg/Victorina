@@ -1,0 +1,322 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.gw{padding:0.5rem 0;max-width:600px;margin:0 auto;font-family:var(--font-sans)}
+.gc{border-radius:16px;overflow:hidden;border:0.5px solid var(--color-border-tertiary);position:relative}
+#cvs{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:20}
+.gh{background:#26215C;padding:0.9rem 1.2rem;display:flex;justify-content:space-between;align-items:center}
+.gtitle{font-size:13px;font-weight:500;color:#CECBF6;letter-spacing:1px;text-transform:uppercase}
+.gpills{display:flex;gap:8px;align-items:center}
+.lives-box{display:flex;gap:4px}
+.hrt{font-size:15px;color:#F09595;transition:all 0.3s}
+.hrt.lost{opacity:0.2;transform:scale(0.7)}
+.multi-pill{font-size:11px;font-weight:500;padding:3px 9px;border-radius:10px;background:#AFA9EC;color:#26215C;transition:background 0.3s,color 0.3s}
+.multi-pill.m2{background:#EF9F27;color:#412402}
+.multi-pill.m3{background:#E24B4A;color:#fcebeb}
+.score-pill{font-size:13px;font-weight:500;color:#FAC775;min-width:50px;text-align:right;transition:transform 0.15s}
+.score-pill.bump{transform:scale(1.3)}
+.gsh{background:#3C3489;padding:0.5rem 1.2rem;display:flex;justify-content:space-between;align-items:center}
+.gtheme{font-size:11px;color:#CECBF6}
+.gqnum{font-size:11px;color:#AFA9EC}
+.timer-row{background:var(--color-background-primary);padding:0.65rem 1.2rem 0;display:flex;align-items:center;gap:10px}
+.tbar-bg{flex:1;height:7px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
+.tbar{height:7px;border-radius:4px;transition:width 0.1s linear,background 0.5s}
+.tnum{font-size:12px;font-weight:500;min-width:22px;text-align:right;color:var(--color-text-secondary)}
+.gbody{background:var(--color-background-primary);padding:0.9rem 1.2rem 1.1rem}
+.qtxt{font-size:16px;font-weight:500;color:var(--color-text-primary);line-height:1.55;margin-bottom:0.9rem;min-height:50px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.obtn{display:flex;align-items:center;gap:9px;border-radius:10px;padding:0.65rem 0.85rem;font-size:13px;cursor:pointer;text-align:left;width:100%;line-height:1.4;font-weight:500;border:2px solid transparent;transition:transform 0.12s,opacity 0.2s}
+.obtn:hover:not(:disabled){transform:scale(1.04)}
+.obtn:active:not(:disabled){transform:scale(0.96)}
+.obtn:disabled{cursor:default}
+.oa{background:#EEEDFE;color:#3C3489}
+.ob{background:#E1F5EE;color:#085041}
+.oc{background:#FAEEDA;color:#633806}
+.od{background:#FAECE7;color:#712B13}
+.obtn.correct{border-color:#639922;background:#EAF3DE;color:#27500A;transform:scale(1.03)}
+.obtn.wrong{border-color:#E24B4A;background:#FCEBEB;color:#791F1F;opacity:0.9}
+.obtn.timeout{border-color:#BA7517;background:#FAEEDA;color:#633806}
+.lbl{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;background:rgba(0,0,0,0.1)}
+.pdots{display:flex;gap:4px;flex-wrap:wrap;background:var(--color-background-primary);padding:0 1.2rem 0.65rem}
+.pd{width:10px;height:10px;border-radius:50%;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);transition:background 0.3s,transform 0.2s}
+.pd.ok{background:#639922;border-color:#639922}
+.pd.fail{background:#E24B4A;border-color:#E24B4A}
+.pd.cur{background:#7F77DD;border-color:#7F77DD;transform:scale(1.3)}
+.gbot{background:var(--color-background-secondary);padding:0.7rem 1.2rem;border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:8px;align-items:center;min-height:44px}
+.fbktxt{font-size:13px;font-weight:500;flex:1;line-height:1.4}
+.fbktxt.ok{color:var(--color-text-success)}
+.fbktxt.fail{color:var(--color-text-danger)}
+.fbktxt.tout{color:#BA7517}
+.nbtn{padding:0.5rem 1.1rem;font-size:13px;font-weight:500;border-radius:8px;border:none;color:#EEEDFE;background:#534AB7;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.nbtn:hover{background:#3C3489}
+.pop-overlay{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);z-index:15;pointer-events:none;opacity:0;text-align:center;min-width:200px}
+.pop-overlay.fire-ok{animation:popOk 0.9s ease-out forwards}
+.pop-overlay.fire-fail{animation:popFail 0.7s ease-out forwards}
+.pop-overlay.fire-multi{animation:popMulti 1s ease-out forwards}
+.pop-main{font-size:32px;font-weight:500;line-height:1.1}
+.pop-sub{font-size:16px;font-weight:500}
+@keyframes popOk{0%{opacity:0;transform:translate(-50%,-50%) scale(0.4)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}65%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-80%) scale(0.9)}}
+@keyframes popFail{0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)}30%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0}}
+@keyframes popMulti{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}50%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.gc.shake{animation:shake 0.4s ease}
+@keyframes heartLost{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(0.7);opacity:0.2}}
+.res{background:var(--color-background-primary);padding:2rem 1.5rem;text-align:center}
+.res-stars{font-size:2rem;letter-spacing:4px;color:#BA7517;margin:0.5rem 0}
+.res-score{font-size:54px;font-weight:500;color:#534AB7;line-height:1}
+.res-lbl{font-size:14px;color:var(--color-text-secondary);margin-bottom:0.25rem}
+.res-msg{font-size:14px;color:var(--color-text-primary);line-height:1.5;margin:0.75rem 0 1rem}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.rs{background:var(--color-background-secondary);border-radius:8px;padding:0.6rem}
+.rs-n{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.rs-l{font-size:11px;color:var(--color-text-secondary)}
+.rbtn{padding:0.65rem 2rem;font-size:14px;font-weight:500;border-radius:8px;border:none;color:#EEEDFE;background:#534AB7;cursor:pointer}
+.rbtn:hover{background:#3C3489}
+</style>
+
+<div class="gw">
+<h2 class="sr-only">Игровая викторина по истории России, 4 класс</h2>
+<div class="gc" id="gc">
+<canvas id="cvs"></canvas>
+<div class="pop-overlay" id="pop"><div class="pop-main" id="popMain"></div><div class="pop-sub" id="popSub"></div></div>
+
+<div class="gh">
+  <div class="gtitle">Викторина историка</div>
+  <div class="gpills">
+    <div class="lives-box" id="livesBox"></div>
+    <div class="multi-pill" id="multiPill">x1</div>
+    <div class="score-pill" id="scorePill">★ 0</div>
+  </div>
+</div>
+<div class="gsh">
+  <div class="gtheme" id="gtheme"></div>
+  <div class="gqnum" id="gqnum"></div>
+</div>
+
+<div id="gameArea">
+  <div class="timer-row">
+    <div class="tbar-bg"><div class="tbar" id="tbar" style="width:100%;background:#1D9E75"></div></div>
+    <div class="tnum" id="tnum">15</div>
+  </div>
+  <div class="gbody">
+    <div class="qtxt" id="qtxt"></div>
+    <div class="opts" id="opts"></div>
+  </div>
+  <div class="pdots" id="pdots"></div>
+  <div class="gbot" id="gbot" style="display:none">
+    <div class="fbktxt" id="fbktxt"></div>
+    <button class="nbtn" id="nbtn" onclick="nextQ()">Дальше →</button>
+  </div>
+</div>
+
+<div id="resScreen" style="display:none"></div>
+</div>
+</div>
+
+<script>
+const THEMES=[
+  {name:"Отечественная война 1812 года",bg:"#3C3489",col:"#CECBF6"},
+  {name:"Страницы истории XIX века",bg:"#3C3489",col:"#CECBF6"},
+  {name:"Россия вступает в XX век",bg:"#3C3489",col:"#CECBF6"},
+  {name:"1920–1930-е годы",bg:"#3C3489",col:"#CECBF6"},
+  {name:"Великая Отечественная война",bg:"#3C3489",col:"#CECBF6"},
+  {name:"Страна, открывшая путь в космос",bg:"#3C3489",col:"#CECBF6"}
+];
+const QS=[
+  {t:0,q:"Кто командовал русской армией в Отечественной войне 1812 года?",opts:["Александр Суворов","Михаил Кутузов","Павел Нахимов","Фёдор Ушаков"],c:1,fact:"Кутузов получил звание фельдмаршала именно за победу над Наполеоном!"},
+  {t:0,q:"Какое сражение стало главным в Отечественной войне 1812 года?",opts:["Полтавское","Куликовская битва","Бородинское","Ледовое побоище"],c:2,fact:"Бородинская битва длилась 12 часов и стала одной из самых кровопролитных в мире."},
+  {t:0,q:"Кто вторгся в Россию в 1812 году?",opts:["Карл XII","Фридрих II","Вильгельм II","Наполеон Бонапарт"],c:3,fact:"Наполеон дошёл до Москвы, но через 36 дней был вынужден позорно отступить!"},
+  {t:1,q:"В каком году в России было отменено крепостное право?",opts:["1812","1825","1861","1881"],c:2,fact:"В момент отмены крепостного права в России было около 23 миллионов крепостных."},
+  {t:1,q:"Какой российский император отменил крепостное право?",opts:["Николай I","Александр I","Пётр I","Александр II"],c:3,fact:"Александра II в народе называли «Царь-Освободитель»."},
+  {t:1,q:"Как называли крестьян, принадлежавших помещикам?",opts:["Казаки","Крепостные","Вольные","Стрельцы"],c:1,fact:"Крепостной крестьянин не мог уйти от помещика без его разрешения."},
+  {t:2,q:"В каком году в России произошла первая революция?",opts:["1900","1905","1914","1917"],c:1,fact:"9 января 1905 года вошло в историю как «Кровавое воскресенье»."},
+  {t:2,q:"В каком году Россия вступила в Первую мировую войну?",opts:["1904","1910","1914","1918"],c:2,fact:"Первая мировая война длилась 4 года и унесла миллионы жизней."},
+  {t:3,q:"Как называлось государство, образованное в 1922 году?",opts:["Российская империя","Российская Федерация","СССР","РСФСР"],c:2,fact:"Советский Союз объединял 15 республик от Прибалтики до Средней Азии."},
+  {t:3,q:"Кто стал первым руководителем советского государства?",opts:["Сталин","Троцкий","Ленин","Хрущёв"],c:2,fact:"Владимир Ленин возглавил Октябрьскую революцию в октябре 1917 года."},
+  {t:4,q:"В каком году началась Великая Отечественная война?",opts:["1939","1940","1941","1942"],c:2,fact:"Германия напала на СССР без предупреждения, рано утром 22 июня 1941 года."},
+  {t:4,q:"В каком году закончилась Великая Отечественная война?",opts:["1943","1944","1945","1946"],c:2,fact:"День Победы — 9 мая — с тех пор отмечается каждый год как главный праздник страны."},
+  {t:4,q:"Какой город выдержал почти 900-дневную блокаду?",opts:["Москва","Сталинград","Киев","Ленинград"],c:3,fact:"Жители Ленинграда выживали благодаря «Дороге жизни» по льду Ладожского озера."},
+  {t:5,q:"Кто стал первым человеком, побывавшим в космосе?",opts:["Нил Армстронг","Герман Титов","Валентина Терешкова","Юрий Гагарин"],c:3,fact:"Полёт Гагарина длился всего 108 минут, но изменил историю человечества навсегда!"},
+  {t:5,q:"В каком году состоялся первый полёт человека в космос?",opts:["1957","1961","1965","1969"],c:1,fact:"В 1957 году СССР запустил первый спутник Земли, а в 1961 — отправил человека в космос!"}
+];
+const LBLS=["А","Б","В","Г"],LCLS=["oa","ob","oc","od"];
+const TIME=15,BASE=100,SPEED_MAX=50;
+let cur=0,score=0,streak=0,maxStreak=0,correctCount=0,lives=3,answered=false,timerId=null,timeLeft=TIME,confFrame=null;
+
+function getMulti(){return streak>=5?3:streak>=3?2:streak>=2?1.5:1;}
+
+function buildDots(){
+  const d=document.getElementById('pdots');d.innerHTML='';
+  QS.forEach((_,i)=>{const s=document.createElement('div');s.className='pd'+(i===0?' cur':'');s.id='pd'+i;d.appendChild(s);});
+}
+
+function buildLives(){
+  const b=document.getElementById('livesBox');b.innerHTML='';
+  for(let i=0;i<3;i++){const h=document.createElement('span');h.className='hrt'+(i>=lives?' lost':'');h.id='hrt'+i;h.textContent='♥';b.appendChild(h);}
+}
+
+function loadQ(){
+  answered=false;timeLeft=TIME;
+  const q=QS[cur];
+  const th=THEMES[q.t];
+  document.getElementById('gsh').style.background=th.bg;
+  document.getElementById('gtheme').textContent=th.name;
+  document.getElementById('gqnum').textContent=`Вопрос ${cur+1} / ${QS.length}`;
+  document.getElementById('qtxt').textContent=q.q;
+  const og=document.getElementById('opts');og.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className=`obtn ${LCLS[i]}`;
+    b.innerHTML=`<span class="lbl">${LBLS[i]}</span><span>${o}</span>`;
+    b.onclick=()=>doAnswer(i);og.appendChild(b);
+  });
+  document.getElementById('gbot').style.display='none';
+  document.getElementById('fbktxt').textContent='';
+  document.getElementById('fbktxt').className='fbktxt';
+  updateTimerUI();
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerId);updateTimerUI();
+  timerId=setInterval(()=>{timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timerId);onTimeout();}},1000);
+}
+
+function updateTimerUI(){
+  const pct=(timeLeft/TIME)*100;
+  const tb=document.getElementById('tbar');
+  tb.style.width=pct+'%';tb.style.background=timeLeft>8?'#1D9E75':timeLeft>4?'#BA7517':'#E24B4A';
+  document.getElementById('tnum').textContent=timeLeft;
+}
+
+function setDot(i,cls){const d=document.getElementById('pd'+i);if(d)d.className='pd '+cls;if(i+1<QS.length){const n=document.getElementById('pd'+(i+1));if(n)n.className='pd cur';}}
+
+function onTimeout(){
+  if(answered)return;answered=true;
+  const btns=document.querySelectorAll('.obtn');btns.forEach(b=>b.disabled=true);
+  btns[QS[cur].c].classList.add('timeout');
+  loseLife();streak=0;updateMulti();setDot(cur,'fail');
+  showBot('Время вышло! Правильный ответ выделен.','tout');
+}
+
+function doAnswer(idx){
+  if(answered)return;answered=true;clearInterval(timerId);
+  const q=QS[cur];
+  const btns=document.querySelectorAll('.obtn');btns.forEach(b=>b.disabled=true);
+  if(idx===q.c){
+    correctCount++;
+    const m=getMulti();
+    streak++;if(streak>maxStreak)maxStreak=streak;
+    const spd=Math.round((timeLeft/TIME)*SPEED_MAX);
+    const pts=Math.round((BASE+spd)*m);
+    score+=pts;
+    btns[idx].classList.add('correct');
+    setDot(cur,'ok');
+    const prevM=streak>1?getPrevMulti():1;
+    const newM=getMulti();
+    updateScore(true);
+    if(newM>prevM){
+      showPop('fire-multi',newM===3?'СЕРИЯ x3!':newM===2?'СЕРИЯ x2!':'СЕРИЯ x1.5!',`Бонус активирован!`,'#FAC775');
+    } else {
+      const msgs=['Верно!','Отлично!','Правильно!','Молодец!'];
+      showPop('fire-ok',msgs[Math.floor(Math.random()*msgs.length)],`+${pts} очков`,'#C0DD97');
+    }
+    updateMulti();
+    launchConfetti();
+    showBot(q.fact||'Верно!','ok');
+  } else {
+    btns[idx].classList.add('wrong');btns[q.c].classList.add('correct');
+    streak=0;updateMulti();loseLife();setDot(cur,'fail');
+    shakeDo();
+    showPop('fire-fail','Увы...','Правильный ответ выделен','#F09595');
+    showBot('Неверно. '+q.fact,'fail');
+  }
+  document.getElementById('nbtn').textContent=cur===QS.length-1?'Результат →':'Дальше →';
+}
+
+function getPrevMulti(){const s=streak-1;return s>=5?3:s>=3?2:s>=2?1.5:1;}
+
+function loseLife(){
+  if(lives>0){lives--;const h=document.getElementById('hrt'+(lives));if(h){h.style.animation='heartLost 0.4s forwards';}}
+}
+
+function updateMulti(){
+  const m=getMulti();const p=document.getElementById('multiPill');
+  p.textContent='x'+m;p.className='multi-pill'+(m>=3?' m3':m>=2?' m2':'');
+}
+
+function updateScore(bump){
+  const p=document.getElementById('scorePill');p.textContent='★ '+score;
+  if(bump){p.classList.add('bump');setTimeout(()=>p.classList.remove('bump'),250);}
+}
+
+function showBot(txt,cls){
+  const f=document.getElementById('fbktxt');f.textContent=txt;f.className='fbktxt '+cls;
+  document.getElementById('gbot').style.display='flex';
+}
+
+function showPop(animCls,main,sub,col){
+  const el=document.getElementById('pop');
+  el.className='pop-overlay';void el.offsetWidth;
+  document.getElementById('popMain').textContent=main;
+  document.getElementById('popMain').style.color=col||'var(--color-text-primary)';
+  document.getElementById('popSub').textContent=sub;
+  document.getElementById('popSub').style.color=col||'var(--color-text-secondary)';
+  el.className='pop-overlay '+animCls;
+}
+
+function shakeDo(){const gc=document.getElementById('gc');gc.classList.remove('shake');void gc.offsetWidth;gc.classList.add('shake');}
+
+function launchConfetti(){
+  const canvas=document.getElementById('cvs');
+  const gc=document.getElementById('gc');
+  canvas.width=gc.offsetWidth;canvas.height=gc.offsetHeight;
+  const ctx=canvas.getContext('2d');
+  const cols=['#7F77DD','#1D9E75','#BA7517','#D85A30','#D4537E','#639922','#378ADD'];
+  const ps=[];
+  for(let i=0;i<55;i++){ps.push({x:Math.random()*canvas.width,y:-10,w:5+Math.random()*6,h:3+Math.random()*4,col:cols[Math.floor(Math.random()*cols.length)],vx:(Math.random()-0.5)*5,vy:1.5+Math.random()*4,rot:Math.random()*360,vrot:(Math.random()-0.5)*12});}
+  if(confFrame)cancelAnimationFrame(confFrame);
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive=false;
+    ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.rot+=p.vrot;p.vy+=0.15;
+      if(p.y<canvas.height+20)alive=true;
+      const a=Math.max(0,1.2-(p.y/canvas.height)*1.5);
+      ctx.save();ctx.globalAlpha=a;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.col;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+    });
+    if(alive)confFrame=requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+function nextQ(){cur++;if(cur>=QS.length)showRes();else loadQ();}
+
+function showRes(){
+  clearInterval(timerId);
+  document.getElementById('gameArea').style.display='none';
+  const pct=Math.round(correctCount/QS.length*100);
+  const sc=Math.min(5,Math.ceil(pct/20));
+  const stars='★'.repeat(sc)+'☆'.repeat(5-sc);
+  const medals=[{t:87,e:'Историк-легенда!',m:'Превосходно! Ты знаешь историю России на отлично. Так держать!'},{t:67,e:'Отличный результат!',m:'Молодец! Повтори пару тем — и станешь настоящим знатоком.'},{t:47,e:'Хороший старт!',m:'Неплохо. Перечитай даты и события ещё раз — и всё получится!'},{t:0,e:'Не сдавайся!',m:'Повтори материал и пробуй снова — у тебя всё получится!'}];
+  const medal=medals.find(x=>pct>=x.t);
+  document.getElementById('resScreen').innerHTML=`<div class="res"><div style="font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.25rem">${medal.e}</div><div class="res-stars">${stars}</div><div class="res-score">${score}</div><div class="res-lbl">очков набрано</div><div class="res-grid" style="margin-top:0.75rem"><div class="rs"><div class="rs-n">${correctCount}/${QS.length}</div><div class="rs-l">правильных</div></div><div class="rs"><div class="rs-n">${maxStreak}</div><div class="rs-l">лучшая серия</div></div><div class="rs"><div class="rs-n">${pct}%</div><div class="rs-l">точность</div></div></div><div class="res-msg">${medal.m}</div><button class="rbtn" onclick="restart()">Сыграть снова</button></div>`;
+  document.getElementById('resScreen').style.display='block';
+  if(pct>=67)launchConfetti();
+}
+
+function restart(){
+  cur=0;score=0;streak=0;maxStreak=0;correctCount=0;lives=3;answered=false;
+  document.getElementById('scorePill').textContent='★ 0';
+  document.getElementById('multiPill').textContent='x1';
+  document.getElementById('multiPill').className='multi-pill';
+  buildLives();buildDots();
+  document.getElementById('resScreen').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  loadQ();
+}
+
+buildLives();buildDots();loadQ();
+</script>
